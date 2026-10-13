@@ -391,7 +391,8 @@ const styles = StyleSheet.create({
   withButton: { paddingRight: space[2], gap: space[3] },
   withPrefix: { gap: 2 },
   prefix: { ...typography.headline, fontFamily: fonts.regular, color: colors.inkSecondary },
-  input: { flex: 1, minWidth: 0, height: '100%', padding: 0, color: colors.ink },
+  // outlineWidth: 0 — у поля своё кольцо фокуса; убираем стандартную обводку браузера в web-превью.
+  input: { flex: 1, minWidth: 0, height: '100%', padding: 0, color: colors.ink, outlineWidth: 0 },
   inputTextLg: { fontFamily: fonts.regular, fontSize: 17 },
   inputTextMd: { fontFamily: fonts.regular, fontSize: 15 },
   inputMultiline: { ...typography.label, fontFamily: fonts.regular, textAlignVertical: 'top' },
