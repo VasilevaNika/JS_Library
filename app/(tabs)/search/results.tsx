@@ -38,7 +38,8 @@ function toRow(b: BookWithAvailability, style: 'results' | 'similar'): Row {
   if (b.publicStatus === 'available') {
     return { book: b, meta: b.authorsShort, chip: { label: 'В наличии', tone: 'available' } };
   }
-  const when = b.nextFreeAt ? dayMonthShort(b.nextFreeAt) : null;
+  // Прошедший срок (просрочка у другого читателя) не показываем — дата уже ничего не говорит.
+  const when = b.nextFreeAt && b.nextFreeAt > Date.now() ? dayMonthShort(b.nextFreeAt) : null;
   if (b.publicStatus === 'busy') {
     const meta = when ? `${b.authorsShort} · ${style === 'similar' ? 'до' : 'освободится'} ${when}` : b.authorsShort;
     return { book: b, meta, chip: { label: 'Занята', tone: 'busy' } };
