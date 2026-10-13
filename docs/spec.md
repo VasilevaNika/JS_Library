@@ -277,6 +277,27 @@ InfoRow: «Читательский билет — № [номер]», «Або�
     └─ Каталог (stack): M3 → M4 Импорт; M5 Новая/Правка — модально
 ```
 
+Маршруты expo-router (`app/`):
+
+| Экран | Маршрут | Показ |
+|---|---|---|
+| S1 Главная | `/search` → `(tabs)/search/index` | вкладка «Поиск» |
+| S2 Результаты | `/search/results?q=` → `(tabs)/search/results` | стек вкладки, TabBar виден |
+| S8 Мои брони | `/bookings` → `(tabs)/bookings/index` | вкладка |
+| S10 Профиль | `/profile` → `(tabs)/profile/index` | вкладка |
+| S4 Карточка книги | `/book/[id]` | корневой стек, без TabBar |
+| S5 Бронь оформлена | `/booking-confirmed/[id]` | корневой стек, без жеста назад |
+| S9 Бронь | `/booking/[id]` | корневой стек |
+| S11 Редактирование | `/profile-edit` | корневой стек |
+| S3 Меню | `/menu` | прозрачная модалка |
+| S6 Вход / Регистрация | `/login?mode=&bookId=&reason=` | модалка |
+| S7 Сброс пароля | `/reset-password` | модалка |
+| M1 Журнал | `/moderator/journal` | стек модератора без анимации (вкладки в шапке) |
+| M2 Выдача и сверка | `/moderator/issue?code=` | то же |
+| M3 Каталог | `/moderator/catalog` | то же |
+| M4 Импорт | `/moderator/catalog/import` | стек |
+| M5 Новая / правка книги | `/moderator/catalog/book?id=` | прозрачная модалка |
+
 Переходы:
 - Лого-бейдж в шапке → S1.
 - TabBar «Мои брони» у гостя → S8 (guest); «Профиль» у гостя → S6.

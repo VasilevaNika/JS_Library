@@ -25,5 +25,17 @@ export default function RootLayout() {
 
   if (!loaded && !error) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="book/[id]" />
+      <Stack.Screen name="booking/[id]" />
+      <Stack.Screen name="booking-confirmed/[id]" options={{ gestureEnabled: false }} />
+      <Stack.Screen name="profile-edit" />
+      <Stack.Screen name="menu" options={{ presentation: 'transparentModal', animation: 'fade' }} />
+      <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="reset-password" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="moderator" />
+    </Stack>
+  );
 }
