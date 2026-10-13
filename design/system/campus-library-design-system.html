@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дизайн-система библиотеки кампуса</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* ───────────── Токены ───────────── */
+:root{
+  --ground-top:#E4E6EA; --ground-mid:#F2F3F5; --ground-bottom:#E8EAED;
+  --glass:rgba(255,255,255,0.62); --glass-strong:rgba(255,255,255,0.72); --glass-edge:rgba(255,255,255,0.95);
+  --surface:#FFFFFF; --surface-sunken:#F1F2F4;
+  --line:#E3E5E8; --line-strong:#D7DADF; --divider:#EEF0F2;
+  --ink:#16181D; --ink-secondary:#5B616B; --ink-muted:#6B717B; --ink-subtle:#7C828C; --on-dark:#FFFFFF;
+  --accent:#2B47C9; --on-accent:#FFFFFF;
+  --status-available-bg:#DDF0E4; --status-available-fg:#17663F; --status-available-dot:#2E9B5F;
+  --status-busy-bg:#FAEBCB; --status-busy-fg:#7A4D00; --status-busy-dot:#D08A0B;
+  --status-overdue-bg:#FBE1DD; --status-overdue-fg:#A1241B; --status-overdue-dot:#D43B2F;
+  --status-neutral-bg:#EDEEF0; --status-neutral-fg:#4A505A; --status-neutral-dot:#8A9099;
+  --brand-teal:#1F5E6B; --brand-blue:#3E6FD8;
+  --aura-violet:rgba(110,134,242,0.42); --aura-peach:rgba(255,170,130,0.45); --aura-mint:rgba(110,200,165,0.32);
+  --cover-teal-from:#1F5E6B; --cover-teal-to:#4FA3A5;
+  --cover-terracotta-from:#B5462E; --cover-terracotta-to:#EE9B6A;
+  --cover-mustard-from:#E0A33A; --cover-mustard-to:#F6DC8C;
+  --cover-violet-from:#4B347D; --cover-violet-to:#9C7BD3;
+  --cover-graphite-from:#262B35; --cover-graphite-to:#5E6A7D;
+  --cover-green-from:#3E7D4F; --cover-green-to:#8CC49A;
+  --cover-rose-from:#A33A5B; --cover-rose-to:#E28AA5;
+  --cover-sky-from:#2F6FA8; --cover-sky-to:#7DB5E0;
+  --cover-ochre-from:#8A6A3E; --cover-ochre-to:#D2B07A;
+  --scan-ground:#1B1E24; --scan-line:#57C08A;
+
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px; --space-8:32px;
+  --radius-cover-spine:3px; --radius-cover:7px; --radius-sm:8px; --radius-md:12px; --radius-icon:18px; --radius-lg:20px; --radius-xl:24px; --radius-2xl:28px; --radius-sheet:32px; --radius-pill:999px;
+  --shadow-glass:0 1px 2px rgba(22,24,29,0.04), 0 12px 32px rgba(22,24,29,0.06);
+  --shadow-floating:0 1px 2px rgba(22,24,29,0.04), 0 12px 32px rgba(22,24,29,0.12);
+  --shadow-tab-active:0 2px 8px rgba(22,24,29,0.08);
+  --shadow-accent:0 8px 20px rgba(43,71,201,0.25);
+  --shadow-cover-sm:inset 3px 0 0 rgba(0,0,0,0.18), 0 4px 10px rgba(22,24,29,0.16);
+  --shadow-cover-lg:inset 6px 0 0 rgba(0,0,0,0.2), 0 20px 40px rgba(22,24,29,0.22), 0 2px 6px rgba(22,24,29,0.1);
+  --shadow-dialog:0 20px 48px rgba(22,24,29,0.25);
+  --control-lg:56px; --control-md:44px; --control-sm:32px; --icon-button:52px; --chip-lg:36px; --chip-md:30px; --chip-sm:26px; --tab-bar:72px;
+  --blur-glass:16px;
+  --font-sans:"Golos Text", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+/* ───────────── Страница ───────────── */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; font-family:var(--font-sans); color:var(--ink); -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(60% 40% at 0% 0%, var(--aura-violet) 0%, rgba(110,134,242,0) 70%),
+    radial-gradient(50% 35% at 100% 0%, var(--aura-peach) 0%, rgba(255,170,130,0) 70%),
+    linear-gradient(170deg, var(--ground-top) 0%, var(--ground-mid) 30%, var(--ground-bottom) 100%);
+  background-attachment: fixed;
+  background-color: var(--ground-mid);
+}
+a{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.layout{display:flex; gap:24px; max-width:1360px; margin:0 auto; padding:24px 16px 80px}
+.side{position:sticky; top:16px; align-self:flex-start; flex:0 0 232px; display:flex; flex-direction:column; gap:4px; padding:16px; border-radius:var(--radius-2xl); background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow-glass); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); max-height:calc(100vh - 32px); overflow:auto}
+.side b{display:block; padding:12px 12px 4px; font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-secondary)}
+.side a{display:block; padding:8px 12px; border-radius:12px; font-size:14px; text-decoration:none; color:var(--ink)}
+.side a:hover{background:var(--surface)}
+.content{flex:1; min-width:0; display:flex; flex-direction:column; gap:24px}
+@media (max-width: 960px){ .side{display:none} }
+
+.hero{position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; gap:12px; min-height:300px; padding:40px; border-radius:var(--radius-sheet); background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow-glass)}
+.hero h1{margin:0; max-width:560px; font-size:64px; line-height:.95; font-weight:600; letter-spacing:-.03em; text-wrap:balance; position:relative}
+.hero p{margin:0; max-width:520px; font-size:16px; line-height:24px; color:var(--ink-secondary); position:relative}
+.hero svg.art{position:absolute; right:0; top:0; height:100%; width:auto}
+@media (max-width: 720px){ .hero{padding:24px; min-height:220px} .hero h1{font-size:40px} .hero svg.art{opacity:.35} }
+
+.sec{display:flex; flex-direction:column; gap:16px; padding:28px; border-radius:var(--radius-sheet); background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow-glass); scroll-margin-top:16px}
+@media (max-width: 720px){ .sec{padding:18px} }
+.sec > h2{margin:0; font-size:32px; line-height:38px; font-weight:600; letter-spacing:-.02em; text-wrap:balance}
+.sec > p.lead{margin:0; max-width:720px; font-size:15px; line-height:22px; color:var(--ink-secondary)}
+.sub{margin:8px 0 0; font-size:17px; line-height:22px; font-weight:600}
+.card{display:flex; flex-direction:column; gap:14px; padding:20px; border-radius:var(--radius-xl); background:var(--surface)}
+.card h3{margin:0; font-size:20px; line-height:26px; font-weight:600; letter-spacing:-.01em}
+.card .desc{margin:0; font-size:14px; line-height:20px; color:var(--ink-secondary); max-width:760px}
+.demo{display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:20px; border-radius:var(--radius-lg); background:
+    radial-gradient(70% 90% at 0% 0%, rgba(110,134,242,0.18) 0%, rgba(110,134,242,0) 70%),
+    linear-gradient(170deg, var(--ground-top), var(--ground-mid))}
+.demo.col{flex-direction:column; align-items:stretch}
+.rules{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:14px; line-height:20px; color:#33373F}
+.rules code, p code, td code{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; padding:1px 6px; border-radius:6px; background:var(--surface-sunken); color:var(--ink)}
+.grid{display:grid; gap:12px}
+.g2{grid-template-columns:repeat(auto-fill, minmax(320px, 1fr))}
+.g3{grid-template-columns:repeat(auto-fill, minmax(220px, 1fr))}
+.g4{grid-template-columns:repeat(auto-fill, minmax(170px, 1fr))}
+.tbl{width:100%; border-collapse:collapse; font-size:14px}
+.tbl th{text-align:left; font-size:12px; font-weight:500; color:var(--ink-secondary); padding:8px 12px; border-bottom:1px solid var(--divider)}
+.tbl td{padding:10px 12px; border-bottom:1px solid var(--divider); vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto; border-radius:var(--radius-xl); background:var(--surface)}
+.do-dont{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:12px}
+.do,.dont{padding:16px; border-radius:var(--radius-lg); font-size:14px; line-height:20px}
+.do{background:var(--status-available-bg); color:#0F4A2D}
+.dont{background:var(--status-overdue-bg); color:#7A1B14}
+.do b,.dont b{display:block; margin-bottom:6px; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+
+/* Цвет */
+.sw{display:flex; flex-direction:column; border-radius:var(--radius-lg); overflow:hidden; background:var(--surface); border:1px solid var(--line)}
+.sw i{display:block; height:76px}
+.sw div{display:flex; flex-direction:column; gap:2px; padding:10px 12px 12px}
+.sw strong{font-size:13px; font-weight:600}
+.sw code{font-family:ui-monospace, Menlo, monospace; font-size:12px; color:var(--ink-secondary)}
+.sw span{font-size:12px; line-height:16px; color:var(--ink-secondary)}
+.cover-pair i{height:96px}
+
+/* Типографика */
+.type-row{display:grid; grid-template-columns:180px 1fr; gap:16px; align-items:baseline; padding:14px 0; border-bottom:1px solid var(--divider)}
+.type-row:last-child{border-bottom:0}
+.type-row .meta{display:flex; flex-direction:column; gap:2px; font-size:12px; color:var(--ink-secondary)}
+.type-row .meta strong{font-size:13px; color:var(--ink)}
+@media (max-width: 640px){ .type-row{grid-template-columns:1fr} }
+
+/* Отступы, радиусы, тени */
+.space-row{display:flex; align-items:center; gap:16px; font-size:13px}
+.space-row .bar{height:16px; border-radius:4px; background:var(--accent)}
+.space-row code{width:72px}
+.radius-box{display:flex; flex-direction:column; align-items:center; gap:8px; font-size:12px; color:var(--ink-secondary); text-align:center}
+.radius-box i{display:block; width:88px; height:64px; background:var(--surface); border:1.5px solid var(--ink)}
+.shadow-box{display:flex; align-items:center; justify-content:center; height:110px; border-radius:var(--radius-lg); background:var(--surface); font-size:13px; font-weight:500; text-align:center; padding:8px}
+
+/* ───────────── Компоненты (bk-) ───────────── */
+.bk-glass{background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow-glass); backdrop-filter:blur(var(--blur-glass)); -webkit-backdrop-filter:blur(var(--blur-glass)); border-radius:var(--radius-2xl)}
+.bk-card{background:var(--surface); border-radius:var(--radius-lg)}
+.bk-display{margin:0; font-size:32px; line-height:38px; font-weight:600; letter-spacing:-.02em}
+.bk-title-lg{margin:0; font-size:28px; line-height:34px; font-weight:600; letter-spacing:-.02em}
+.bk-title{margin:0; font-size:20px; line-height:26px; font-weight:600; letter-spacing:-.01em}
+.bk-headline{margin:0; font-size:17px; line-height:22px; font-weight:500}
+.bk-muted{color:var(--ink-muted)}
+.bk-caption{font-size:13px; line-height:18px; color:var(--ink-secondary)}
+
+.bk-chip{display:inline-flex; align-items:center; gap:6px; height:var(--chip-md); padding:0 12px; border-radius:var(--radius-pill); font-size:12px; line-height:16px; font-weight:500; white-space:nowrap}
+.bk-chip--sm{height:var(--chip-sm)}
+.bk-chip--available{background:var(--status-available-bg); color:var(--status-available-fg)}
+.bk-chip--busy{background:var(--status-busy-bg); color:var(--status-busy-fg)}
+.bk-chip--overdue{background:var(--status-overdue-bg); color:var(--status-overdue-fg)}
+.bk-chip--neutral{background:var(--status-neutral-bg); color:var(--status-neutral-fg)}
+.bk-chip--lg{height:var(--chip-lg); padding:0 14px 0 12px; gap:8px; font-size:13px; background:rgba(255,255,255,0.7); border:1px solid var(--glass-edge)}
+.bk-chip__dot{width:8px; height:8px; border-radius:50%; flex:none}
+.bk-chip--available .bk-chip__dot{background:var(--status-available-dot)}
+.bk-chip--busy .bk-chip__dot{background:var(--status-busy-dot)}
+.bk-chip--overdue .bk-chip__dot{background:var(--status-overdue-dot)}
+.bk-chip--neutral .bk-chip__dot{background:var(--status-neutral-dot)}
+
+.bk-btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:var(--control-lg); padding:0 24px; border:0; border-radius:var(--radius-pill); font:600 16px/20px var(--font-sans); text-decoration:none; white-space:nowrap; cursor:pointer}
+.bk-btn--primary{background:var(--accent); color:var(--on-accent); box-shadow:var(--shadow-accent)}
+.bk-btn--dark{background:var(--ink); color:var(--on-dark)}
+.bk-btn--secondary{background:var(--surface); color:var(--ink); border:1px solid var(--line)}
+.bk-btn--tertiary{background:var(--surface-sunken); color:var(--ink)}
+.bk-btn--danger{background:var(--status-overdue-bg); color:var(--status-overdue-fg)}
+.bk-btn--md{height:var(--control-md); padding:0 16px; font-size:14px; font-weight:500}
+.bk-btn--sm{height:var(--control-sm); padding:0 14px; font-size:13px; font-weight:500}
+.bk-btn[disabled]{background:#E3E5E8; color:var(--ink-secondary); box-shadow:none; cursor:not-allowed}
+.bk-btn--block{width:100%}
+
+.bk-iconbtn{display:inline-flex; align-items:center; justify-content:center; width:var(--icon-button); height:var(--icon-button); flex:none; border-radius:var(--radius-icon); color:var(--ink); cursor:pointer; background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow-glass); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px)}
+.bk-iconbtn--plain{width:var(--control-md); height:var(--control-md); border-radius:16px; background:var(--surface); border:0; box-shadow:none}
+
+.bk-field{display:flex; flex-direction:column; gap:8px; min-width:0}
+.bk-field label,.bk-field .lbl{padding:0 8px; font-size:13px; font-weight:500; color:var(--ink-secondary)}
+.bk-input{display:flex; align-items:center; gap:12px; height:var(--control-lg); padding:0 20px; background:var(--surface); border-radius:var(--radius-pill)}
+.bk-input input{flex:1; min-width:0; height:100%; border:0; outline:none; background:transparent; font:400 17px/22px var(--font-sans); color:var(--ink)}
+.bk-input input::placeholder{color:var(--ink-subtle)}
+.bk-input:focus-within{box-shadow:0 0 0 3px var(--accent)}
+.bk-input.is-error{box-shadow:0 0 0 2px var(--status-overdue-dot)}
+.bk-input--icon{padding-right:6px}
+.bk-input__btn{display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex:none; border:0; border-radius:50%; background:var(--surface-sunken); color:var(--ink); cursor:pointer}
+.bk-field .err{padding:0 8px; font-size:13px; line-height:18px; color:var(--status-overdue-fg)}
+
+.bk-seg{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; padding:4px; border-radius:var(--radius-pill); background:rgba(22,24,29,0.06)}
+.bk-seg button{height:44px; border:0; border-radius:var(--radius-pill); background:transparent; font:500 14px var(--font-sans); color:var(--ink-secondary); cursor:pointer}
+.bk-seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow-tab-active)}
+
+.bk-switch{position:relative; width:52px; height:32px; flex:none; border:0; border-radius:var(--radius-pill); background:#C9CDD3; cursor:pointer}
+.bk-switch::after{content:""; position:absolute; top:4px; left:4px; width:24px; height:24px; border-radius:50%; background:#FFF; box-shadow:0 1px 3px rgba(22,24,29,.25); transition:left .15s}
+.bk-switch[aria-checked="true"]{background:var(--ink)}
+.bk-switch[aria-checked="true"]::after{left:24px}
+@media (prefers-reduced-motion: reduce){ .bk-switch::after{transition:none} }
+
+.bk-check{display:flex; align-items:center; gap:12px; padding:10px; border-radius:16px; background:#F4F5F7; cursor:pointer; font-size:14px}
+.bk-check input{width:20px; height:20px; accent-color:var(--ink)}
+
+.bk-stepper{display:flex; align-items:center; justify-content:space-between; width:200px; height:48px; padding:0 4px; border-radius:var(--radius-pill); background:var(--surface)}
+.bk-stepper button{width:40px; height:40px; border:0; border-radius:50%; background:var(--surface-sunken); font-size:18px; color:var(--ink); cursor:pointer}
+.bk-stepper span{font-size:16px; font-weight:600; font-variant-numeric:tabular-nums}
+
+.bk-cover{position:relative; overflow:hidden; display:inline-block; width:40px; height:58px; flex:none; border-radius:var(--radius-cover-spine) var(--radius-cover) var(--radius-cover) var(--radius-cover-spine); box-shadow:var(--shadow-cover-sm)}
+.bk-cover--md{width:44px; height:64px}
+.bk-cover--lg{width:152px; height:224px; border-radius:4px 12px 12px 4px; box-shadow:var(--shadow-cover-lg); color:#FFF; padding:18px 14px 16px 20px; display:flex; flex-direction:column; justify-content:space-between}
+.bk-cover__line{position:absolute; left:20%; right:14%; top:17%; height:3px; border-radius:2px; background:rgba(255,255,255,0.8)}
+.bk-cover__line + .bk-cover__line{top:28%; right:34%; background:rgba(255,255,255,0.5)}
+.bk-cover--teal{background:linear-gradient(160deg,var(--cover-teal-from),var(--cover-teal-to))}
+.bk-cover--terracotta{background:linear-gradient(160deg,var(--cover-terracotta-from),var(--cover-terracotta-to))}
+.bk-cover--mustard{background:linear-gradient(160deg,var(--cover-mustard-from),var(--cover-mustard-to))}
+.bk-cover--mustard .bk-cover__line{background:rgba(22,24,29,0.55)}
+.bk-cover--violet{background:linear-gradient(160deg,var(--cover-violet-from),var(--cover-violet-to))}
+.bk-cover--graphite{background:linear-gradient(160deg,var(--cover-graphite-from),var(--cover-graphite-to))}
+.bk-cover--graphite .bk-cover__line{background:rgba(230,200,140,0.9); height:2px}
+.bk-cover--green{background:linear-gradient(160deg,var(--cover-green-from),var(--cover-green-to))}
+.bk-cover--rose{background:linear-gradient(160deg,var(--cover-rose-from),var(--cover-rose-to))}
+.bk-cover--sky{background:linear-gradient(160deg,var(--cover-sky-from),var(--cover-sky-to))}
+.bk-cover--ochre{background:linear-gradient(160deg,var(--cover-ochre-from),var(--cover-ochre-to))}
+
+.bk-row{display:flex; align-items:center; gap:12px; padding:10px; border-radius:var(--radius-lg); background:var(--surface); color:var(--ink); text-decoration:none}
+.bk-row__body{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px}
+.bk-row__title{font-size:15px; line-height:20px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.bk-row__meta{font-size:13px; line-height:18px; color:var(--ink-secondary)}
+
+.bk-info{display:flex; flex-direction:column; padding:4px 16px; border-radius:var(--radius-xl); background:var(--surface); margin:0}
+.bk-info__row{display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; font-size:14px; border-bottom:1px solid var(--divider)}
+.bk-info__row:last-child{border-bottom:0}
+.bk-info dt{color:var(--ink-secondary)}
+.bk-info dd{margin:0; font-weight:500}
+
+.bk-stats{display:flex; gap:8px}
+.bk-stat{display:flex; flex-direction:column; gap:8px}
+.bk-stat__label{padding-left:8px; font-size:12px; line-height:16px; color:var(--ink-secondary)}
+.bk-stat__value{display:flex; align-items:center; height:var(--control-lg); padding:0 20px; border-radius:var(--radius-pill); font-size:20px; font-weight:600; background:var(--surface)}
+.bk-stat__value--disc{width:56px; padding:0; justify-content:center; border-radius:50%; background:linear-gradient(145deg,#FFF 0%,#E3E6EA 100%); border:1px solid var(--line)}
+.bk-stat--disc .bk-stat__label{padding-left:0}
+
+.bk-notice{display:flex; flex-direction:column; gap:6px; padding:12px 16px; border-radius:var(--radius-lg); font-size:13px; line-height:18px; font-weight:500}
+.bk-notice--busy{background:var(--status-busy-bg); color:var(--status-busy-fg)}
+.bk-notice--available{background:var(--status-available-bg); color:var(--status-available-fg)}
+.bk-notice--overdue{background:var(--status-overdue-bg); color:var(--status-overdue-fg)}
+.bk-notice--neutral{background:var(--status-neutral-bg); color:var(--status-neutral-fg)}
+
+.bk-toast{display:flex; align-items:center; gap:12px; padding:12px 12px 12px 16px; border-radius:var(--radius-lg); background:var(--ink); color:#FFF; box-shadow:0 12px 32px rgba(22,24,29,0.3); font-size:13px; line-height:18px; max-width:380px}
+.bk-toast button{flex:none; height:36px; padding:0 14px; border:0; border-radius:var(--radius-pill); background:#FFF; color:var(--ink); font:600 13px var(--font-sans); cursor:pointer}
+
+.bk-dialog{display:flex; flex-direction:column; gap:12px; width:100%; max-width:342px; padding:24px 20px 20px; border-radius:var(--radius-2xl); background:var(--surface); box-shadow:var(--shadow-dialog)}
+.bk-sheet{display:flex; flex-direction:column; gap:16px; width:100%; max-width:374px; padding:12px 20px 20px; border-radius:var(--radius-sheet); background:rgba(246,247,249,0.97); border:1px solid var(--glass-edge); box-shadow:0 -12px 40px rgba(22,24,29,0.2)}
+.bk-sheet .grip{align-self:center; width:40px; height:5px; border-radius:3px; background:#C9CDD3}
+.scrim{display:flex; align-items:flex-end; justify-content:center; padding:16px 8px 8px; border-radius:var(--radius-lg); background:rgba(22,24,29,0.36); min-height:280px; width:100%}
+.scrim.center{align-items:center}
+
+.bk-tabbar{display:flex; align-items:center; justify-content:space-around; width:100%; max-width:342px; height:var(--tab-bar); padding:8px; border-radius:var(--radius-2xl); background:var(--glass-strong); border:1px solid var(--glass-edge); box-shadow:var(--shadow-floating); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px)}
+.bk-tab{position:relative; display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:var(--radius-lg); color:var(--ink-subtle); background:transparent; border:0}
+.bk-tab[aria-current="page"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow-tab-active)}
+.bk-tab .badge{position:absolute; top:8px; right:8px; min-width:18px; height:18px; padding:0 5px; border-radius:999px; background:var(--ink); color:#FFF; font-size:11px; font-weight:600; line-height:18px; text-align:center}
+
+.bk-logo{display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex:none; border-radius:50%; color:#FFF; background:linear-gradient(140deg,var(--brand-teal) 0%,var(--brand-blue) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.bk-badge{display:inline-flex; align-items:center; gap:12px; height:var(--control-lg); padding:0 20px 0 6px; border-radius:var(--radius-pill); font-size:15px; font-weight:500; background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow-glass); text-decoration:none; color:var(--ink)}
+.bk-avatar{display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; flex:none; border-radius:50%; font-size:11px; font-weight:600; color:#FFF}
+
+.bk-filter{display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:2px; height:60px; padding:0 20px; border:0; border-radius:var(--radius-pill); font-family:inherit; text-align:left; cursor:pointer; background:var(--surface); color:var(--ink)}
+.bk-filter__label{font-size:12px; line-height:16px; white-space:nowrap}
+.bk-filter__count{font-size:20px; line-height:24px; font-weight:600}
+.bk-filter[aria-pressed="true"]{background:var(--ink); color:#FFF}
+.bk-filter--overdue{background:var(--status-overdue-bg); color:var(--status-overdue-fg)}
+.bk-filter--busy{background:var(--status-busy-bg); color:var(--status-busy-fg)}
+.bk-filter--neutral{background:var(--status-neutral-bg); color:var(--status-neutral-fg)}
+.bk-fchip{display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 8px 0 16px; border:0; border-radius:999px; font:500 13px var(--font-sans); cursor:pointer}
+.bk-fchip span{min-width:28px; height:26px; padding:0 8px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,.6); font-variant-numeric:tabular-nums}
+
+.bk-skel{display:block; border-radius:6px; background:linear-gradient(90deg,#E3E5E8,#EEF0F2)}
+
+.bk-steps{display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0; list-style:none}
+.bk-steps li{display:inline-flex; align-items:center; gap:8px; height:36px; padding:0 14px 0 6px; border-radius:999px; font-size:13px; font-weight:500; background:rgba(255,255,255,.7); color:var(--ink-secondary)}
+.bk-steps li i{display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; font-style:normal; font-size:12px; font-weight:600; background:var(--status-neutral-bg); color:var(--status-neutral-fg)}
+.bk-steps li.done{color:var(--status-available-fg)}
+.bk-steps li.done i{background:var(--status-available-bg); color:var(--status-available-fg)}
+.bk-steps li[aria-current="step"]{background:var(--ink); color:#FFF}
+.bk-steps li[aria-current="step"] i{background:rgba(255,255,255,.18); color:#FFF}
+
+.bk-timeline{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:14px}
+.bk-timeline li{display:flex; gap:12px}
+.bk-timeline li > i{width:10px; height:10px; margin-top:5px; flex:none; border-radius:50%}
+.bk-timeline b{display:block; font-size:14px; font-weight:500}
+
+.bk-nav{display:flex; gap:4px; padding:4px; border-radius:999px; background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow-glass)}
+.bk-nav a{display:inline-flex; align-items:center; height:42px; padding:0 18px; border-radius:999px; font-size:14px; font-weight:500; text-decoration:none; color:var(--ink-secondary)}
+.bk-nav a[aria-current="page"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow-tab-active)}
+
+.vh{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.icon-cell{display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 8px; border-radius:var(--radius-lg); background:var(--surface); font-size:12px; color:var(--ink-secondary); text-align:center}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="side" aria-label="Разделы дизайн-системы">
+    <b>Основа</b>
+    <a href="#principles">Принципы</a>
+    <a href="#voice">Тон текста</a>
+    <a href="#color">Цвет</a>
+    <a href="#type">Типографика</a>
+    <a href="#space">Сетка и отступы</a>
+    <a href="#shape">Форма и тени</a>
+    <a href="#icons">Иконки</a>
+    <b>Компоненты</b>
+    <a href="#c-status">Статусы</a>
+    <a href="#c-buttons">Кнопки</a>
+    <a href="#c-forms">Формы</a>
+    <a href="#c-books">Книги</a>
+    <a href="#c-feedback">Обратная связь</a>
+    <a href="#c-overlays">Диалоги и шторки</a>
+    <a href="#c-nav">Навигация</a>
+    <a href="#c-states">Загрузка и пустые</a>
+    <a href="#c-mod">Модератор</a>
+    <b>Правила</b>
+    <a href="#a11y">Доступность</a>
+    <a href="#slots">Слоты под визуал</a>
+  </nav>
+
+  <main class="content">
+    <header class="hero">
+      <svg class="art" viewBox="0 0 480 300" aria-hidden="true">
+        <rect x="260" y="-40" width="260" height="210" rx="28" fill="#2B47C9"/>
+        <circle cx="320" cy="34" r="12" fill="#fff" opacity=".9"/><circle cx="352" cy="66" r="12" fill="#fff" opacity=".9"/><circle cx="384" cy="34" r="12" fill="#fff" opacity=".9"/><circle cx="416" cy="66" r="12" fill="#fff" opacity=".9"/><circle cx="448" cy="34" r="12" fill="#fff" opacity=".9"/>
+        <rect x="100" y="92" width="36" height="168" rx="7" fill="#1F5E6B"/>
+        <rect x="144" y="124" width="28" height="136" rx="7" fill="#B5462E"/>
+        <rect x="180" y="148" width="44" height="112" rx="7" fill="#E0A33A"/>
+        <rect x="232" y="76" width="32" height="184" rx="7" fill="#16181D"/>
+        <rect x="272" y="132" width="40" height="128" rx="7" fill="#4FA3A5"/>
+        <rect x="60" y="260" width="400" height="10" rx="5" fill="#D7DADF"/>
+      </svg>
+      <h1>Библиотека кампуса</h1>
+      <p>Дизайн-система сервиса брони книг: спокойный интерфейс, одно действие на экране, статус с первого взгляда. Мобильный веб для студентов и десктоп для модератора.</p>
+    </header>
+
+    <section id="principles" class="sec">
+      <h2>Принципы</h2>
+      <div class="grid g2">
+        <div class="card"><h3>Одно действие на экране</h3><p class="desc">Цвет <code>accent</code> получает только главное действие: «Забронировать» у студента, «Подтвердить выдачу» и «Выдать» у модератора. Всё остальное — <code>dark</code>, <code>secondary</code> или <code>tertiary</code>.</p></div>
+        <div class="card"><h3>Обложка — единственное яркое пятно</h3><p class="desc">Фон, стекло и карточки нейтральные. Цвет приносят обложки (<code>cover-*</code>) и статусы (<code>status-*</code>).</p></div>
+        <div class="card"><h3>Статус без захода в карточку</h3><p class="desc">У каждой книги в любом списке есть <code>StatusChip</code> со словом. Сроки — конкретной датой, а не счётчиком.</p></div>
+        <div class="card"><h3>Стекло, а не рамки</h3><p class="desc">Группы — полупрозрачное стекло поверх цветного фона; записи — белые карточки внутри. Линии только как разделители строк.</p></div>
+      </div>
+    </section>
+
+    <section id="voice" class="sec">
+      <h2>Тон <span class="bk-muted">текста</span></h2>
+      <p class="lead">Пишем фактами, без восклицаний и геймификации. Обращаемся на «вы». В студенческой части нет слов «экземпляр», «шифр», «фонд» — это лексика модератора.</p>
+      <div class="do-dont">
+        <div class="do"><b>Так</b>«Книга ждёт вас до 18 сентября, 20:00»<br>«Срок возврата прошёл 12 сентября. Если книга уже на полке, отметьте возврат»<br>«Не удалось создать бронь. Книга по-прежнему в наличии — попробуйте ещё раз»</div>
+        <div class="dont"><b>Не так</b>«Ура! Вы успели забронировать!»<br>«Осталось 47:59:12»<br>«Ошибка 500. Что-то пошло не так»<br>«Вы нарушили срок возврата»</div>
+      </div>
+      <ul class="rules">
+        <li>Кнопки — глаголом действия: «Забронировать», «Встать в очередь», «Я вернул книгу», «Закрыть запись».</li>
+        <li>Подпись кнопки не переносится. Не помещается — сокращаем («Отменить») и оставляем полный смысл в <code>aria-label</code> («Отменить бронь»).</li>
+        <li>Ошибка = что случилось + что делать дальше. Без извинений и кодов.</li>
+        <li>Даты: в карточке «18 сентября, 20:00», в списке «до 16 сент.», на десктопе «18.09, 20:00». Неизвестное — в скобках: «[часы работы]».</li>
+        <li>Без эмодзи.</li>
+      </ul>
+    </section>
+
+    <section id="color" class="sec">
+      <h2>Цвет</h2>
+      <p class="lead">Одна светлая тема. Нейтральная основа с лёгким холодным оттенком, один акцент и четыре тона статусов. Все текстовые пары проходят WCAG AA.</p>
+
+      <h3 class="sub">Основа и поверхности</h3>
+      <div class="grid g4">
+        <div class="sw"><i style="background:linear-gradient(170deg,#E4E6EA,#F2F3F5 40%,#E8EAED)"></i><div><strong>ground-*</strong><code>#E4E6EA → #F2F3F5 → #E8EAED</code><span>Фон экрана, градиент 170°</span></div></div>
+        <div class="sw"><i style="background:linear-gradient(170deg,#E4E6EA,#F2F3F5)"><span style="display:block;margin:14px;height:48px;border-radius:14px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.95)"></span></i><div><strong>glass</strong><code>rgba(255,255,255,.62)</code><span>Стеклянные карточки, + <code>glass-edge</code></span></div></div>
+        <div class="sw"><i style="background:#FFFFFF"></i><div><strong>surface</strong><code>#FFFFFF</code><span>Белые записи внутри стекла</span></div></div>
+        <div class="sw"><i style="background:#F1F2F4"></i><div><strong>surface-sunken</strong><code>#F1F2F4</code><span>Третичные кнопки, лунки иконок</span></div></div>
+        <div class="sw"><i style="background:#E3E5E8"></i><div><strong>line</strong><code>#E3E5E8</code><span>Обводка вторичной кнопки</span></div></div>
+        <div class="sw"><i style="background:#D7DADF"></i><div><strong>line-strong</strong><code>#D7DADF</code><span>Полка в иллюстрациях</span></div></div>
+        <div class="sw"><i style="background:#EEF0F2"></i><div><strong>divider</strong><code>#EEF0F2</code><span>Разделители строк</span></div></div>
+      </div>
+
+      <h3 class="sub">Текст и акцент</h3>
+      <div class="grid g4">
+        <div class="sw"><i style="background:#16181D"></i><div><strong>ink</strong><code>#16181D</code><span>Основной текст, тёмная кнопка</span></div></div>
+        <div class="sw"><i style="background:#5B616B"></i><div><strong>ink-secondary</strong><code>#5B616B</code><span>Подписи, авторы, сроки · 5.9:1</span></div></div>
+        <div class="sw"><i style="background:#6B717B"></i><div><strong>ink-muted</strong><code>#6B717B</code><span>Серая часть заголовков · 4.5:1 на фоне</span></div></div>
+        <div class="sw"><i style="background:#7C828C"></i><div><strong>ink-subtle</strong><code>#7C828C</code><span>Только иконки и плейсхолдеры</span></div></div>
+        <div class="sw"><i style="background:#2B47C9"></i><div><strong>accent</strong><code>#2B47C9</code><span>Только главное действие · белый 7.3:1</span></div></div>
+      </div>
+
+      <h3 class="sub">Статусы</h3>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr><th>Тон</th><th>Пример</th><th>Токены</th><th>Статусы</th><th>Контраст</th></tr></thead>
+          <tbody>
+            <tr><td>Зелёный</td><td><span class="bk-chip bk-chip--available">В наличии</span></td><td><code>status-available-*</code><br><span class="bk-caption">#DDF0E4 · #17663F · #2E9B5F</span></td><td>В наличии, книга освободилась</td><td>5.8:1</td></tr>
+            <tr><td>Янтарный</td><td><span class="bk-chip bk-chip--busy">Ждёт вас</span></td><td><code>status-busy-*</code><br><span class="bk-caption">#FAEBCB · #7A4D00 · #D08A0B</span></td><td>Занята, Ждёт вас, Забронирована, Выдана</td><td>6.2:1</td></tr>
+            <tr><td>Красный</td><td><span class="bk-chip bk-chip--overdue">Просрочено</span></td><td><code>status-overdue-*</code><br><span class="bk-caption">#FBE1DD · #A1241B · #D43B2F</span></td><td>Просрочено, ошибки, деструктивные действия</td><td>6.0:1</td></tr>
+            <tr><td>Нейтральный</td><td><span class="bk-chip bk-chip--neutral">Ожидает сверки</span></td><td><code>status-neutral-*</code><br><span class="bk-caption">#EDEEF0 · #4A505A · #8A9099</span></td><td>В очереди, Ожидает сверки, Закрыта, Истекла, Отменена</td><td>7.1:1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sub">Бренд и фон</h3>
+      <div class="grid g4">
+        <div class="sw"><i style="background:linear-gradient(140deg,#1F5E6B,#3E6FD8)"></i><div><strong>brand-teal → brand-blue</strong><code>#1F5E6B → #3E6FD8</code><span>Временный знак библиотеки</span></div></div>
+        <div class="sw"><i style="background:radial-gradient(80% 90% at 20% 20%, rgba(110,134,242,.6), rgba(110,134,242,0) 70%), #F2F3F5"></i><div><strong>aura-violet</strong><code>rgba(110,134,242,.42)</code><span>Пятно фона, левый верх</span></div></div>
+        <div class="sw"><i style="background:radial-gradient(80% 90% at 80% 20%, rgba(255,170,130,.65), rgba(255,170,130,0) 70%), #F2F3F5"></i><div><strong>aura-peach</strong><code>rgba(255,170,130,.45)</code><span>Пятно фона, правый верх</span></div></div>
+        <div class="sw"><i style="background:radial-gradient(80% 90% at 50% 80%, rgba(110,200,165,.55), rgba(110,200,165,0) 70%), #F2F3F5"></i><div><strong>aura-mint</strong><code>rgba(110,200,165,.32)</code><span>Пятно фона, успех брони</span></div></div>
+        <div class="sw"><i style="background:radial-gradient(70% 70% at 50% 40%, #3B4250, #1B1E24)"></i><div><strong>scan-ground</strong><code>#1B1E24</code><span>Видоискатель QR</span></div></div>
+        <div class="sw"><i style="background:#57C08A"></i><div><strong>scan-line</strong><code>#57C08A</code><span>Линия сканирования</span></div></div>
+      </div>
+
+      <h3 class="sub">Обложки-заглушки</h3>
+      <p class="lead">Пара <code>cover-&lt;цвет&gt;-from</code> → <code>-to</code>, градиент 160°. Соседние книги — разные цвета; у одной книги цвет постоянный на всех экранах.</p>
+      <div class="grid g4">
+        <div class="sw cover-pair"><i class="bk-cover--teal"></i><div><strong>teal</strong><code>#1F5E6B → #4FA3A5</code></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--terracotta"></i><div><strong>terracotta</strong><code>#B5462E → #EE9B6A</code></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--mustard"></i><div><strong>mustard</strong><code>#E0A33A → #F6DC8C</code><span>Детали тёмные</span></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--violet"></i><div><strong>violet</strong><code>#4B347D → #9C7BD3</code></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--graphite"></i><div><strong>graphite</strong><code>#262B35 → #5E6A7D</code><span>Детали золотистые</span></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--green"></i><div><strong>green</strong><code>#3E7D4F → #8CC49A</code></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--rose"></i><div><strong>rose</strong><code>#A33A5B → #E28AA5</code></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--sky"></i><div><strong>sky</strong><code>#2F6FA8 → #7DB5E0</code></div></div>
+        <div class="sw cover-pair"><i class="bk-cover--ochre"></i><div><strong>ochre</strong><code>#8A6A3E → #D2B07A</code></div></div>
+      </div>
+    </section>
+
+    <section id="type" class="sec">
+      <h2>Типографика</h2>
+      <p class="lead">Одно семейство — Golos Text (Google Fonts, 400 / 500 / 600). Заголовки двухцветные: ключевые слова <code>ink</code>, связка <code>ink-muted</code>.</p>
+      <div class="card" style="gap:0">
+        <div class="type-row"><div class="meta"><strong>display</strong>32 / 38 · 600 · −0.02em</div><div class="bk-display">Какая книга <span class="bk-muted">вам</span> нужна?</div></div>
+        <div class="type-row"><div class="meta"><strong>title-lg</strong>28 / 34 · 600 · −0.02em</div><div class="bk-title-lg">Алгоритмы. Построение и анализ</div></div>
+        <div class="type-row"><div class="meta"><strong>title</strong>20 / 26 · 600 · −0.01em</div><div class="bk-title">Подтвердить <span class="bk-muted">выдачу</span></div></div>
+        <div class="type-row"><div class="meta"><strong>headline</strong>17 / 22 · 500</div><div class="bk-headline"><span class="bk-muted">Найдено</span> 5 книг</div></div>
+        <div class="type-row"><div class="meta"><strong>body</strong>15 / 22 · 400</div><div style="font-size:15px;line-height:22px">Забрать можно в любое время в часы работы библиотеки.</div></div>
+        <div class="type-row"><div class="meta"><strong>body-strong</strong>15 / 20 · 600</div><div style="font-size:15px;line-height:20px;font-weight:600">Грокаем алгоритмы</div></div>
+        <div class="type-row"><div class="meta"><strong>label</strong>14 / 20 · 500</div><div style="font-size:14px;line-height:20px;font-weight:500">18 сентября, 20:00</div></div>
+        <div class="type-row"><div class="meta"><strong>caption</strong>13 / 18 · 400</div><div class="bk-caption">Заберите до 18 сентября, 20:00</div></div>
+        <div class="type-row"><div class="meta"><strong>micro</strong>12 / 16 · 500</div><div style="font-size:12px;line-height:16px;font-weight:500">В наличии</div></div>
+        <div class="type-row"><div class="meta"><strong>button / button-sm</strong>16·600 / 14·500</div><div style="display:flex;gap:16px;align-items:baseline"><span style="font-size:16px;font-weight:600">Забронировать</span><span style="font-size:14px;font-weight:500">Я вернул книгу</span></div></div>
+      </div>
+      <ul class="rules">
+        <li>Не больше одного приглушённого фрагмента в заголовке; приглушаем связку, а не факт.</li>
+        <li>На подтверждении брони наоборот: «<span class="bk-muted">Книга ждёт вас</span> / до 18 сентября» — дата главная.</li>
+        <li>Цифры в колонках и сроках — <code>font-variant-numeric: tabular-nums</code>.</li>
+      </ul>
+    </section>
+
+    <section id="space" class="sec">
+      <h2>Сетка <span class="bk-muted">и отступы</span></h2>
+      <p class="lead">База 4 px, ритм 8 px. Мобильный артборд 390 × 844, поле 16 px. Десктоп 1440 × 900, поле 24 px, строки таблицы 44 px.</p>
+      <div class="card">
+        <div class="space-row"><code>space-1</code><i class="bar" style="width:4px"></i>4 px · название ↔ автор</div>
+        <div class="space-row"><code>space-2</code><i class="bar" style="width:8px"></i>8 px · строки списка, кнопки в ряду</div>
+        <div class="space-row"><code>space-3</code><i class="bar" style="width:12px"></i>12 px · обложка ↔ текст</div>
+        <div class="space-row"><code>space-4</code><i class="bar" style="width:16px"></i>16 px · поле экрана, между стеклянными карточками</div>
+        <div class="space-row"><code>space-5</code><i class="bar" style="width:20px"></i>20 px · отступ панели на десктопе</div>
+        <div class="space-row"><code>space-6</code><i class="bar" style="width:24px"></i>24 px · поле десктопа</div>
+        <div class="space-row"><code>space-8</code><i class="bar" style="width:32px"></i>32 px · большие паузы</div>
+      </div>
+      <h3 class="sub">Высоты элементов</h3>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Токен</th><th>Значение</th><th>Где</th></tr></thead><tbody>
+        <tr><td><code>control-lg</code></td><td>56 px</td><td>Главные кнопки, поля, счётчики, шапка-таблетка</td></tr>
+        <tr><td><code>control-md</code></td><td>44 px</td><td>Кнопки в карточках, тулбар десктопа. Минимум для касания</td></tr>
+        <tr><td><code>control-sm</code></td><td>32 px</td><td>Только кнопки в строке таблицы на десктопе</td></tr>
+        <tr><td><code>icon-button</code></td><td>52 px</td><td>Иконки-кнопки в шапке мобильного экрана</td></tr>
+        <tr><td><code>chip-lg / md / sm</code></td><td>36 / 30 / 26 px</td><td>Карточка книги / мобильные списки / десктоп</td></tr>
+        <tr><td><code>tab-bar</code></td><td>72 px</td><td>Плавающий таб-бар, отступ 20 снизу и 24 по бокам</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="shape" class="sec">
+      <h2>Форма <span class="bk-muted">и тени</span></h2>
+      <div class="grid g4">
+        <div class="radius-box"><i style="border-radius:3px 7px 7px 3px;width:44px;height:64px"></i><code>radius-cover</code>3 / 7 px — обложка</div>
+        <div class="radius-box"><i style="border-radius:12px"></i><code>radius-md</code>12 px — большая обложка</div>
+        <div class="radius-box"><i style="border-radius:18px;width:64px"></i><code>radius-icon</code>18 px — иконка-кнопка</div>
+        <div class="radius-box"><i style="border-radius:20px"></i><code>radius-lg</code>20 px — белые строки</div>
+        <div class="radius-box"><i style="border-radius:24px"></i><code>radius-xl</code>24 px — InfoRow, таблица</div>
+        <div class="radius-box"><i style="border-radius:28px"></i><code>radius-2xl</code>28 px — стекло, таб-бар</div>
+        <div class="radius-box"><i style="border-radius:32px 32px 0 0"></i><code>radius-sheet</code>32 px — нижняя панель</div>
+        <div class="radius-box"><i style="border-radius:999px;height:40px"></i><code>radius-pill</code>кнопки, чипы, поля</div>
+      </div>
+      <h3 class="sub">Тени</h3>
+      <div class="grid g3">
+        <div class="shadow-box" style="box-shadow:var(--shadow-glass)">shadow-glass<br>все стеклянные поверхности</div>
+        <div class="shadow-box" style="box-shadow:var(--shadow-floating)">shadow-floating<br>таб-бар над контентом</div>
+        <div class="shadow-box" style="box-shadow:var(--shadow-accent)">shadow-accent<br>только кнопка accent</div>
+        <div class="shadow-box" style="box-shadow:var(--shadow-dialog)">shadow-dialog<br>диалоги</div>
+        <div class="shadow-box" style="background:transparent"><span class="bk-cover bk-cover--lg bk-cover--teal" style="width:72px;height:104px"></span><span style="margin-left:12px">shadow-cover<br>корешок + тень</span></div>
+      </div>
+    </section>
+
+    <section id="icons" class="sec">
+      <h2>Иконки</h2>
+      <p class="lead">Своя линейная система: viewBox 24, обводка <code>currentColor</code> 1.75–1.9 px, скруглённые концы, без заливок. Размеры: 18 — таблица и тулбар, 20 — кнопки и InfoRow, 22 — иконки-кнопки, 24 — таб-бар.</p>
+      <div class="grid g4" style="grid-template-columns:repeat(auto-fill,minmax(120px,1fr))">
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="color:#16181D" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>search</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>bookmark</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/><path d="M12 8v5M9.5 10.5h5"/></svg>bookmark-plus</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="color:#16181D" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>user</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="color:#16181D" aria-hidden="true"><path d="M5 8h14M5 12h14M5 16h14"/></svg>menu</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>back</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="color:#16181D" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>close</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>check</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="color:#16181D" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>clock</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>calendar</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="color:#16181D" aria-hidden="true"><path d="M4 6v12M7 6v12M10.5 6v12M13 6v12M16.5 6v12M20 6v12"/></svg>barcode</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="color:#16181D" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>sliders</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/></svg>sort</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>download</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l4-4-4-4M14 12H4"/></svg>logout</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>eye</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>edit</div>
+        <div class="icon-cell"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" style="color:#16181D" aria-hidden="true"><path d="M12 6.5c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5z"/><path d="M12 6.5V19.5"/></svg>book-open</div>
+      </div>
+    </section>
+
+    <!-- ───────── Компоненты ───────── -->
+    <section id="c-status" class="sec">
+      <h2>Статусы</h2>
+      <div class="card">
+        <h3>StatusChip</h3>
+        <p class="desc">Один компонент для всех статусов книги и брони. Тон: <code>available</code>, <code>busy</code>, <code>overdue</code>, <code>neutral</code>. Размер: <code>sm</code> 26, <code>md</code> 30, <code>lg</code> 36 с точкой.</p>
+        <div class="demo">
+          <span class="bk-chip bk-chip--available">В наличии</span><span class="bk-chip bk-chip--busy">Занята</span><span class="bk-chip bk-chip--busy">Ждёт вас</span><span class="bk-chip bk-chip--busy">Выдана</span><span class="bk-chip bk-chip--overdue">Просрочено</span><span class="bk-chip bk-chip--neutral">В очереди</span><span class="bk-chip bk-chip--neutral">Ожидает сверки</span><span class="bk-chip bk-chip--neutral">Закрыта</span><span class="bk-chip bk-chip--neutral">Истекла</span><span class="bk-chip bk-chip--neutral">Отменена</span>
+        </div>
+        <div class="demo">
+          <span class="bk-chip bk-chip--lg bk-chip--available"><span class="bk-chip__dot"></span>В наличии</span>
+          <span class="bk-chip bk-chip--lg bk-chip--busy"><span class="bk-chip__dot"></span>Ваша бронь</span>
+          <span class="bk-chip bk-chip--sm bk-chip--overdue">Просрочено</span>
+          <span class="bk-chip bk-chip--sm bk-chip--neutral">Ожидает сверки</span>
+        </div>
+        <ul class="rules"><li>Статус всегда словом; цвет — дополнительный сигнал.</li><li>Никогда не <code>accent</code>. Текст чипа не переносится, чип не сжимается (<code>flex: none</code>).</li></ul>
+      </div>
+      <div class="card">
+        <h3>StatBlock</h3>
+        <p class="desc">Ряд из трёх счётчиков: две таблетки разной ширины и диск. Самое важное число — первым и самым широким.</p>
+        <div class="demo col">
+          <div class="bk-stats" style="max-width:360px"><div class="bk-stat" style="flex:2"><span class="bk-stat__label">На полке</span><span class="bk-stat__value" style="background:var(--status-available-bg);color:var(--status-available-fg)">2</span></div><div class="bk-stat" style="flex:1.3"><span class="bk-stat__label">Выдано</span><span class="bk-stat__value">3</span></div><div class="bk-stat bk-stat--disc"><span class="bk-stat__label">Очередь</span><span class="bk-stat__value bk-stat__value--disc">0</span></div></div>
+          <div class="bk-stats" style="max-width:360px"><div class="bk-stat" style="flex:2"><span class="bk-stat__label">Активные</span><span class="bk-stat__value">4</span></div><div class="bk-stat" style="flex:1.4"><span class="bk-stat__label">Просрочено</span><span class="bk-stat__value" style="background:var(--status-overdue-bg);color:var(--status-overdue-fg)">1</span></div><div class="bk-stat bk-stat--disc"><span class="bk-stat__label">Завершённые</span><span class="bk-stat__value bk-stat__value--disc">4</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-buttons" class="sec">
+      <h2>Кнопки</h2>
+      <div class="card">
+        <h3>Button</h3>
+        <p class="desc">Таблетка в пяти вариантах и трёх высотах. <code>primary</code> — одна на экран.</p>
+        <div class="demo">
+          <button class="bk-btn bk-btn--primary" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/><path d="M12 8v5M9.5 10.5h5"/></svg>Забронировать</button>
+          <button class="bk-btn bk-btn--dark" type="button">Мои брони</button>
+          <button class="bk-btn bk-btn--secondary" type="button">Встать в очередь</button>
+          <button class="bk-btn bk-btn--danger" type="button">Отменить бронь</button>
+          <button class="bk-btn" type="button" disabled>Забронировать</button>
+        </div>
+        <div class="demo" style="background:#FFF">
+          <button class="bk-btn bk-btn--tertiary bk-btn--md" type="button" aria-label="Отменить бронь">Отменить</button>
+          <button class="bk-btn bk-btn--tertiary bk-btn--md" type="button">Я вернул книгу</button>
+          <button class="bk-btn bk-btn--tertiary bk-btn--sm" type="button">Закрыть запись</button>
+          <button class="bk-btn bk-btn--primary bk-btn--md" type="button">Подтвердить выдачу</button>
+        </div>
+        <div class="scroll"><table class="tbl"><thead><tr><th>Вариант</th><th>Когда</th></tr></thead><tbody>
+          <tr><td><code>primary</code></td><td>«Забронировать», «Подтвердить выдачу», «Выдать». Одна на экран</td></tr>
+          <tr><td><code>dark</code></td><td>Главное действие, если оно не бронь и не выдача: «Войти», «Я вернул книгу», «Да, книга на полке»</td></tr>
+          <tr><td><code>secondary</code></td><td>Рядом с <code>dark</code> или вместо <code>primary</code>, когда оно недоступно: «Встать в очередь», «Отмена»</td></tr>
+          <tr><td><code>tertiary</code></td><td>Действие внутри белой карточки или строки</td></tr>
+          <tr><td><code>danger</code></td><td>Деструктивное подтверждение в диалоге: «Отменить бронь», «Выйти», «Отметить расхождение»</td></tr>
+          <tr><td>disabled</td><td>Серая заливка, без тени. Рядом — объяснение, почему недоступно</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <h3>IconButton</h3>
+        <p class="desc">Только иконка и обязательный <code>aria-label</code>. Стеклянная 52 × 52 в шапке, белая 44 × 44 в тулбаре.</p>
+        <div class="demo">
+          <button class="bk-iconbtn" type="button" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button class="bk-iconbtn" type="button" aria-label="Меню"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M5 8h14M5 12h14M5 16h14"/></svg></button>
+          <button class="bk-iconbtn" type="button" aria-label="Закрыть"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <button class="bk-iconbtn bk-iconbtn--plain" type="button" aria-label="Фильтры"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+          <button class="bk-iconbtn bk-iconbtn--plain" type="button" aria-label="Изменить профиль"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-forms" class="sec">
+      <h2>Формы</h2>
+      <div class="grid g2">
+        <div class="card">
+          <h3>Поле ввода</h3>
+          <p class="desc">Белая таблетка 56 px с подписью над ней. Фокус — кольцо 3 px <code>accent</code>; ошибка — кольцо 2 px <code>status-overdue-dot</code> и текст под полем.</p>
+          <div class="demo col">
+            <div class="bk-field"><label for="d1">Почта</label><div class="bk-input"><input id="d1" type="email" placeholder="name@mail.ru"></div></div>
+            <div class="bk-field"><label for="d2">Почта</label><div class="bk-input is-error"><input id="d2" type="email" value="anna.smirnova.mail.ru" aria-invalid="true" aria-describedby="d2e"></div><span id="d2e" class="err">Проверьте адрес — в нём нет @</span></div>
+            <div class="bk-field"><label for="d3">Telegram <span style="font-weight:400">· для напоминаний о сроке</span></label><div class="bk-input" style="gap:2px"><span aria-hidden="true" style="font-size:17px;color:var(--ink-secondary)">@</span><input id="d3" type="text" placeholder="username"></div></div>
+            <div class="bk-field"><label for="d4">Пароль</label><div class="bk-input bk-input--icon"><input id="d4" type="password" value="password1"><button class="bk-input__btn" type="button" aria-label="Показать пароль"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+          </div>
+          <ul class="rules"><li>Ошибку показываем на потере фокуса, не на каждом символе.</li><li>Плейсхолдер — пример, а не подпись. Подпись всегда видна.</li></ul>
+        </div>
+        <div class="card">
+          <h3>Поиск</h3>
+          <p class="desc">Главный элемент первого экрана: стеклянная карточка, подпись, поле 56 px, справа иконка или «Очистить».</p>
+          <div class="demo col">
+            <div class="bk-glass" style="display:flex;flex-direction:column;gap:12px;padding:16px">
+              <label for="d5" style="padding:0 8px;font-size:15px;line-height:20px;color:var(--ink-secondary)">Название, автор <span style="color:var(--ink);font-weight:500">или ISBN</span></label>
+              <div class="bk-input bk-input--icon"><input id="d5" type="search" value="алгоритмы"><button class="bk-input__btn" type="button" aria-label="Очистить запрос"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+            </div>
+          </div>
+          <h3 style="margin-top:8px">Переключатель режима</h3>
+          <div class="demo col"><div class="bk-seg" role="group" aria-label="Режим"><button type="button" aria-pressed="true">Вход</button><button type="button" aria-pressed="false">Регистрация</button></div></div>
+        </div>
+        <div class="card">
+          <h3>Switch, Checkbox, Stepper</h3>
+          <p class="desc">Переключатель включён — <code>ink</code>, выключен — <code>#C9CDD3</code>. Чекбокс — в строке-карточке. Счётчик — для количества экземпляров.</p>
+          <div class="demo col">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:var(--radius-xl);background:#FFF"><span id="sw1" style="font-size:14px;font-weight:500">Напоминать о сроке</span><button class="bk-switch" type="button" role="switch" aria-checked="true" aria-labelledby="sw1" onclick="this.setAttribute('aria-checked', this.getAttribute('aria-checked')==='true'?'false':'true')"></button></div>
+            <label class="bk-check"><input type="checkbox" checked><span class="bk-cover bk-cover--teal" style="width:28px;height:40px"></span><span style="display:flex;flex-direction:column"><b style="font-weight:600">Алгоритмы. Построение и анализ</b><span class="bk-caption">Бронь до 18 сентября, 20:00</span></span></label>
+            <div role="group" aria-label="Экземпляров" class="bk-stepper"><button type="button" aria-label="Меньше">−</button><span>5</span><button type="button" aria-label="Больше">+</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-books" class="sec">
+      <h2>Книги</h2>
+      <div class="card">
+        <h3>BookCover</h3>
+        <p class="desc">Обложка — единственный по-настоящему цветной объект. Три размера: 40 × 58 в списке, 44 × 64 в карточке брони, 152 × 224 в карточке книги. Скругление: корешок 3 px, срез 7 px.</p>
+        <div class="demo" style="align-items:flex-end;gap:24px">
+          <div class="bk-cover bk-cover--lg bk-cover--teal" role="img" aria-label="Обложка «Алгоритмы. Построение и анализ»"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:17px;font-weight:600;line-height:19px">Алгоритмы</span><span style="font-size:10px;opacity:.85">Построение и анализ</span></div><span style="font-size:9px;letter-spacing:.04em;text-transform:uppercase;opacity:.8">Кормен · Лейзерсон · Ривест · Штайн</span></div>
+          <span class="bk-cover bk-cover--md bk-cover--violet"><span class="bk-cover__line"></span><span class="bk-cover__line"></span></span>
+          <span class="bk-cover bk-cover--mustard"><span class="bk-cover__line"></span><span class="bk-cover__line"></span></span>
+          <span class="bk-cover bk-cover--graphite"><span class="bk-cover__line"></span><span class="bk-cover__line"></span></span>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <h3>BookRow</h3>
+          <p class="desc">Строка результата: обложка, название в одну строку, автор и срок, чип справа. Вся строка — ссылка на карточку.</p>
+          <div class="demo col">
+            <div class="bk-glass" style="display:flex;flex-direction:column;gap:12px;padding:16px 12px 12px">
+              <h4 class="bk-headline" style="padding:0 8px"><span class="bk-muted">Найдено</span> 5 книг</h4>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <a class="bk-row" href="#c-books"><span class="bk-cover bk-cover--teal"><span class="bk-cover__line"></span><span class="bk-cover__line"></span></span><span class="bk-row__body"><span class="bk-row__title">Алгоритмы. Построение и анализ</span><span class="bk-row__meta">Т. Кормен и др.</span></span><span class="bk-chip bk-chip--available" style="flex:none">В наличии</span></a>
+                <a class="bk-row" href="#c-books"><span class="bk-cover bk-cover--terracotta"><span class="bk-cover__line"></span><span class="bk-cover__line"></span></span><span class="bk-row__body"><span class="bk-row__title">Алгоритмы на C++</span><span class="bk-row__meta">Р. Седжвик · освободится 17 сент.</span></span><span class="bk-chip bk-chip--busy" style="flex:none">Занята</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>BookingCard</h3>
+          <p class="desc">Карточка брони: сверху ссылка на детали, снизу чип слева и одно действие справа. У просроченной — красная внутренняя обводка.</p>
+          <div class="demo col">
+            <article class="bk-card" style="display:flex;flex-direction:column;gap:10px;padding:10px">
+              <a href="#c-books" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><span class="bk-cover bk-cover--teal"><span class="bk-cover__line"></span><span class="bk-cover__line"></span></span><span class="bk-row__body"><span class="bk-row__title">Алгоритмы. Построение и анализ</span><span class="bk-row__meta">Заберите до 18 сентября, 20:00</span></span></a>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span class="bk-chip bk-chip--busy">Ждёт вас</span><button class="bk-btn bk-btn--tertiary bk-btn--md" type="button" aria-label="Отменить бронь">Отменить</button></div>
+            </article>
+            <article class="bk-card" style="display:flex;flex-direction:column;gap:10px;padding:10px;box-shadow:inset 0 0 0 1px #F3CBC5">
+              <a href="#c-books" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><span class="bk-cover bk-cover--mustard"><span class="bk-cover__line"></span><span class="bk-cover__line"></span></span><span class="bk-row__body"><span class="bk-row__title">Грокаем алгоритмы</span><span class="bk-row__meta" style="color:var(--status-overdue-fg)">Срок возврата прошёл 12 сентября</span></span></a>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span class="bk-chip bk-chip--overdue">Просрочено</span><button class="bk-btn bk-btn--tertiary bk-btn--md" type="button">Я вернул книгу</button></div>
+            </article>
+          </div>
+        </div>
+        <div class="card">
+          <h3>InfoRow</h3>
+          <p class="desc">Пары «подпись — значение» в белом блоке. Разметка <code>&lt;dl&gt;</code>. Уточнения серым.</p>
+          <div class="demo col">
+            <dl class="bk-info"><div class="bk-info__row"><dt>Забрать до</dt><dd>18 сентября, 20:00 <span class="bk-muted" style="font-weight:400">(48 ч)</span></dd></div><div class="bk-info__row"><dt>Где</dt><dd>Абонемент, 2 этаж</dd></div><div class="bk-info__row"><dt>ISBN</dt><dd>[ISBN]</dd></div></dl>
+          </div>
+        </div>
+        <div class="card">
+          <h3>QR-карточка</h3>
+          <p class="desc">QR-код брони и короткий код на случай, если камера модератора не сработает. Код — <code>ink</code> на белом, без цвета.</p>
+          <div class="demo col">
+            <div style="display:flex;align-items:center;gap:16px;padding:12px;border-radius:var(--radius-2xl);background:#FFF;box-shadow:var(--shadow-glass)">
+              <div role="img" aria-label="QR-код брони" style="width:112px;height:112px;flex:none;padding:8px;border-radius:18px;border:1px solid var(--line)"><div id="qr" style="display:grid;grid-template-columns:repeat(21,minmax(0,1fr));width:94px;height:94px"></div></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">Покажите код на абонементе</b><span class="bk-caption">Если камера не сработает, назовите код</span><span style="font-size:22px;font-weight:600;letter-spacing:.08em">7KQ 4MX</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-feedback" class="sec">
+      <h2>Обратная <span class="bk-muted">связь</span></h2>
+      <div class="grid g2">
+        <div class="card">
+          <h3>Notice</h3>
+          <p class="desc">Плашка-пояснение на экране: факт и, если нужно, ссылка на следующий шаг. Тон — как у статусов.</p>
+          <div class="demo col">
+            <div class="bk-notice bk-notice--available">Ваша бронь. Книга ждёт вас до 18 сентября, 20:00</div>
+            <div class="bk-notice bk-notice--busy">Книгу только что забронировали. Можно встать в очередь.</div>
+            <div class="bk-notice bk-notice--neutral">У вас уже 3 активные брони. Заберите или отмените одну из них.<a href="#c-feedback" style="font-weight:600">Открыть «Мои брони»</a></div>
+            <div class="bk-notice bk-notice--overdue">Бронь с кодом 9ZZ1AB не найдена. Проверьте код или найдите по имени.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Banner и Toast</h3>
+          <p class="desc">Баннер — состояние экрана (нет сети, сессия истекла). Тост — итог действия, тёмный, с одним действием.</p>
+          <div class="demo col">
+            <div role="status" style="display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;border-radius:var(--radius-lg);background:var(--status-busy-bg);color:var(--status-busy-fg)"><span style="flex:1;font-size:13px;font-weight:500">Нет подключения. Показаны данные на 18:40</span><button class="bk-btn bk-btn--sm" type="button" style="background:#FFF;color:var(--ink)">Повторить</button></div>
+            <div class="bk-toast" role="alert"><span style="flex:1">Не удалось создать бронь. Книга по-прежнему в наличии — попробуйте ещё раз.</span><button type="button">Повторить</button></div>
+            <div class="bk-toast" role="status"><span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:none;border-radius:50%;background:var(--status-available-dot)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Возврат отмечен</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-overlays" class="sec">
+      <h2>Диалоги <span class="bk-muted">и шторки</span></h2>
+      <div class="grid g2">
+        <div class="card">
+          <h3>Dialog</h3>
+          <p class="desc">Подтверждение необратимого действия. Вопрос с названием книги, одна строка последствий, «Оставить» слева и деструктивная кнопка справа.</p>
+          <div class="scrim center"><section class="bk-dialog" role="alertdialog" aria-labelledby="dl1"><h4 id="dl1" class="bk-title">Отменить бронь на «Алгоритмы. Построение и анализ»?</h4><p style="margin:0;font-size:15px;line-height:22px;color:var(--ink-secondary)">Книга сразу станет доступна другим.</p><div style="display:flex;gap:8px;padding-top:8px"><button class="bk-btn bk-btn--secondary" type="button" style="flex:1">Оставить</button><button class="bk-btn bk-btn--danger" type="button" style="flex:1.2">Отменить бронь</button></div></section></div>
+        </div>
+        <div class="card">
+          <h3>Bottom sheet</h3>
+          <p class="desc">Результат действия или подтверждение без потери контекста. Ручка сверху, тап по затемнению закрывает.</p>
+          <div class="scrim"><section class="bk-sheet" role="dialog" aria-labelledby="sh1"><span class="grip" aria-hidden="true"></span><h4 id="sh1" class="bk-title">Вы 2-й <span class="bk-muted">в очереди</span></h4><p style="margin:0;font-size:15px;line-height:22px;color:#4A505A">Когда книга освободится, мы напишем на почту и в Telegram. У вас будет 24 часа, чтобы её забрать.</p><div style="display:flex;gap:8px"><button class="bk-btn bk-btn--secondary" type="button" style="flex:1">Мои брони</button><button class="bk-btn bk-btn--dark" type="button" style="flex:1.2">Понятно</button></div></section></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-nav" class="sec">
+      <h2>Навигация</h2>
+      <div class="grid g2">
+        <div class="card">
+          <h3>Header</h3>
+          <p class="desc">Слева стеклянная таблетка со знаком и названием, справа иконка-кнопка. На карточке книги — «Назад», на подтверждении — «Закрыть».</p>
+          <div class="demo" style="justify-content:space-between">
+            <a class="bk-badge" href="#c-nav"><span class="bk-logo" role="img" aria-label="Знак библиотеки"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5z"/><path d="M12 6.5V19.5"/></svg></span>Библиотека кампуса</a>
+            <button class="bk-iconbtn" type="button" aria-label="Меню"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M5 8h14M5 12h14M5 16h14"/></svg></button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>TabBar</h3>
+          <p class="desc">Плавающая навигация студента: Поиск · Мои брони (бейдж активных) · Профиль. Скрыта на подтверждении брони, входе и подтверждении возврата.</p>
+          <div class="demo">
+            <nav class="bk-tabbar" aria-label="Основная навигация">
+              <a class="bk-tab" href="#c-nav" aria-label="Поиск" aria-current="page"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></a>
+              <a class="bk-tab" href="#c-nav" aria-label="Мои брони, 4 активные"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg><span class="badge" aria-hidden="true">4</span></a>
+              <a class="bk-tab" href="#c-nav" aria-label="Профиль"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg></a>
+            </nav>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Разделы модератора</h3>
+          <p class="desc">Верхние вкладки на десктопе: Журнал · Выдача и сверка · Каталог. Справа дата, модератор и «Выйти».</p>
+          <div class="demo"><nav class="bk-nav" aria-label="Разделы модератора"><a href="#c-nav" aria-current="page">Журнал</a><a href="#c-nav">Выдача и сверка</a><a href="#c-nav">Каталог</a></nav></div>
+        </div>
+        <div class="card">
+          <h3>Шаги</h3>
+          <p class="desc">Прогресс многошагового процесса — импорт каталога. Пройденный шаг зелёный с галочкой, текущий тёмный.</p>
+          <div class="demo"><ol class="bk-steps" aria-label="Шаги импорта"><li class="done"><i>✓</i>Файл</li><li class="done"><i>✓</i>Колонки</li><li aria-current="step"><i>3</i>Проверка</li><li><i>4</i>Готово</li></ol></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-states" class="sec">
+      <h2>Загрузка <span class="bk-muted">и пустые экраны</span></h2>
+      <div class="grid g2">
+        <div class="card">
+          <h3>Skeleton</h3>
+          <p class="desc">Скелетоны вместо спиннеров: повторяют форму строки, обложки и чипа. Поле поиска при этом активно.</p>
+          <div class="demo col">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-lg);background:#FFF"><span class="bk-skel" style="width:40px;height:58px;border-radius:6px"></span><span style="flex:1;display:flex;flex-direction:column;gap:8px"><span class="bk-skel" style="height:12px;width:78%"></span><span class="bk-skel" style="height:10px;width:42%"></span></span><span class="bk-skel" style="width:72px;height:30px;border-radius:999px"></span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-lg);background:#FFF"><span class="bk-skel" style="width:40px;height:58px;border-radius:6px"></span><span style="flex:1;display:flex;flex-direction:column;gap:8px"><span class="bk-skel" style="height:12px;width:60%"></span><span class="bk-skel" style="height:10px;width:38%"></span></span><span class="bk-skel" style="width:72px;height:30px;border-radius:999px"></span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>EmptyState</h3>
+          <p class="desc">Иллюстрация полки, заголовок, одно предложение и одно действие. Пустой блок, который не нужен, скрываем целиком.</p>
+          <div class="demo col">
+            <div class="bk-glass" style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:12px 12px 20px;text-align:center">
+              <div role="img" aria-label="Почти пустая полка" style="width:100%;height:140px;border-radius:20px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px 20px;background:radial-gradient(70% 60% at 85% 15%, rgba(110,134,242,.35), rgba(110,134,242,0) 70%), linear-gradient(180deg,#F6F7FB,#FFF)"><div aria-hidden="true" style="display:flex;align-items:flex-end;gap:4px"><span style="width:20px;height:84px;border-radius:3px;background:linear-gradient(180deg,#4FA3A5,#1F5E6B)"></span><span style="width:18px;height:76px;border-radius:3px;background:linear-gradient(180deg,#EE9B6A,#B5462E);transform:rotate(-14deg);transform-origin:bottom right"></span></div><div aria-hidden="true" style="height:8px;border-radius:4px;background:#C5C9CF"></div></div>
+              <h4 class="bk-title">У вас пока нет броней</h4>
+              <span class="bk-caption" style="font-size:15px;line-height:22px">Найдите книгу и забронируйте её — она будет ждать вас 48 часов.</span>
+              <button class="bk-btn bk-btn--dark" type="button">Найти книгу</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="c-mod" class="sec">
+      <h2>Модератор</h2>
+      <div class="card">
+        <h3>Фильтры со счётчиками</h3>
+        <p class="desc">Журнал: компактные чипы, можно выбрать несколько. Импорт: крупные счётчики-таблетки. Выбранный — <code>ink</code>.</p>
+        <div class="demo">
+          <button class="bk-fchip" type="button" aria-pressed="true" style="background:var(--ink);color:#FFF">Все<span style="background:rgba(255,255,255,.18)">128</span></button>
+          <button class="bk-fchip" type="button" aria-pressed="false" style="background:var(--status-busy-bg);color:var(--status-busy-fg)">Забронировано<span>3</span></button>
+          <button class="bk-fchip" type="button" aria-pressed="false" style="background:var(--status-overdue-bg);color:var(--status-overdue-fg)">Просрочено<span>3</span></button>
+          <button class="bk-fchip" type="button" aria-pressed="false" style="background:var(--status-neutral-bg);color:var(--status-neutral-fg)">Ожидает сверки<span>3</span></button>
+        </div>
+        <div class="demo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <button class="bk-filter" type="button" aria-pressed="true"><span class="bk-filter__label">Все строки</span><span class="bk-filter__count">352</span></button>
+          <button class="bk-filter" type="button" aria-pressed="false" style="background:var(--status-available-bg);color:var(--status-available-fg)"><span class="bk-filter__label">Будет добавлено</span><span class="bk-filter__count">312</span></button>
+          <button class="bk-filter bk-filter--neutral" type="button" aria-pressed="false"><span class="bk-filter__label">Уже в каталоге</span><span class="bk-filter__count">28</span></button>
+          <button class="bk-filter bk-filter--overdue" type="button" aria-pressed="false"><span class="bk-filter__label">С ошибками</span><span class="bk-filter__count">12</span></button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>JournalTable</h3>
+        <p class="desc">Плотная таблица: строки 44 px, текст 13 px, даты <code>tabular-nums</code>, просроченный срок красным. Действие в строке — <code>tertiary sm</code>. Сначала самые срочные.</p>
+        <div class="scroll" style="border:1px solid var(--line)">
+          <table class="tbl" style="min-width:820px;font-size:13px">
+            <thead><tr><th>Студент</th><th>Книга</th><th>Выдана</th><th>Срок возврата</th><th>Статус</th><th><span class="vh">Действие</span></th></tr></thead>
+            <tbody>
+              <tr><td><span style="display:flex;align-items:center;gap:10px"><span class="bk-avatar" style="background:linear-gradient(140deg,#1F5E6B,#4FA3A5)">АС</span><b style="font-weight:500">Анна Смирнова</b><span class="bk-muted" style="font-size:12px">ПМ-21</span></span></td><td>Грокаем алгоритмы</td><td>29.08</td><td style="color:var(--status-overdue-fg);font-weight:600">12.09</td><td><span class="bk-chip bk-chip--sm bk-chip--overdue">Просрочено</span></td><td style="text-align:right"><button class="bk-btn bk-btn--tertiary bk-btn--sm" type="button">Сверить</button></td></tr>
+              <tr><td><span style="display:flex;align-items:center;gap:10px"><span class="bk-avatar" style="background:linear-gradient(140deg,#2F6FA8,#7DB5E0)">МЛ</span><b style="font-weight:500">Мария Лебедева</b><span class="bk-muted" style="font-size:12px">ФИ-23</span></span></td><td>Механика</td><td>01.09</td><td>15.09</td><td><span class="bk-chip bk-chip--sm bk-chip--neutral">Ожидает сверки</span></td><td style="text-align:right"><button class="bk-btn bk-btn--tertiary bk-btn--sm" type="button">Сверить</button></td></tr>
+              <tr><td><span style="display:flex;align-items:center;gap:10px"><span class="bk-avatar" style="background:linear-gradient(140deg,#4B347D,#9C7BD3)">ВН</span><b style="font-weight:500">Вера Новикова</b><span class="bk-muted" style="font-size:12px">ПМ-21</span></span></td><td>Искусство программирования. Том 1</td><td>—</td><td>до 17.09, 18:30</td><td><span class="bk-chip bk-chip--sm bk-chip--busy">Забронирована</span></td><td style="text-align:right"><button class="bk-btn bk-btn--tertiary bk-btn--sm" type="button">Выдать</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <h3>ScanViewfinder</h3>
+          <p class="desc">Видоискатель QR: тёмный градиент, белые уголки, линия <code>scan-line</code>. Без камеры — нейтральная плашка и фокус в поле кода.</p>
+          <div role="img" aria-label="Зона сканирования QR-кода" style="position:relative;height:180px;border-radius:var(--radius-xl);overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(70% 70% at 50% 40%,#3B4250 0%,#1B1E24 100%)">
+            <div aria-hidden="true" style="position:relative;width:112px;height:112px"><span style="position:absolute;left:0;top:0;width:24px;height:24px;border-left:3px solid #FFF;border-top:3px solid #FFF;border-top-left-radius:10px"></span><span style="position:absolute;right:0;top:0;width:24px;height:24px;border-right:3px solid #FFF;border-top:3px solid #FFF;border-top-right-radius:10px"></span><span style="position:absolute;left:0;bottom:0;width:24px;height:24px;border-left:3px solid #FFF;border-bottom:3px solid #FFF;border-bottom-left-radius:10px"></span><span style="position:absolute;right:0;bottom:0;width:24px;height:24px;border-right:3px solid #FFF;border-bottom:3px solid #FFF;border-bottom-right-radius:10px"></span><span style="position:absolute;left:10px;right:10px;top:54px;height:2px;background:#57C08A;box-shadow:0 0 12px 2px rgba(87,192,138,.6)"></span></div>
+            <span style="position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:12px;color:rgba(255,255,255,.85)">Наведите камеру на QR-код брони</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>История статусов</h3>
+          <p class="desc">Таймлайн записи: точка цвета статуса, событие, дата и кто изменил.</p>
+          <ol class="bk-timeline">
+            <li><i style="background:var(--status-busy-dot)"></i><span><b>Забронирована</b><span class="bk-caption">29 августа, 14:02 · студент</span></span></li>
+            <li><i style="background:var(--status-busy-dot)"></i><span><b>Выдана, вернуть до 12 сентября</b><span class="bk-caption">29 августа, 17:40 · [Имя модератора]</span></span></li>
+            <li><i style="background:var(--status-overdue-dot)"></i><span><b>Просрочено</b><span class="bk-caption">13 сентября, 00:00 · система</span></span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="a11y" class="sec">
+      <h2>Доступность</h2>
+      <ul class="rules">
+        <li>Текст — не ниже 4.5:1 на своём фоне; крупный (24 px+) — не ниже 3:1. <code>ink-subtle</code> для текста не используется.</li>
+        <li>Статус всегда подписан словом. Зелёный и красный различаются ещё и по светлоте фона.</li>
+        <li>Фокус — сплошное кольцо 3 px <code>accent</code> с отступом 2 px; у полей — вокруг всей таблетки.</li>
+        <li>Касание на мобильном — не меньше 44 px. Кнопки 32 px — только в таблице на десктопе.</li>
+        <li>Иконки без подписи — с <code>aria-label</code>; декоративные SVG — <code>aria-hidden="true"</code>.</li>
+        <li>Поля с ошибкой — <code>aria-invalid</code> и текст ошибки, связанный через <code>aria-describedby</code>.</li>
+        <li>Переключатели — <code>role="switch"</code> с <code>aria-checked</code>; фильтры — <code>aria-pressed</code>; текущий пункт навигации — <code>aria-current="page"</code>.</li>
+        <li>Диалоги — <code>role="alertdialog"</code> для необратимых действий, шторки — <code>role="dialog"</code>.</li>
+      </ul>
+    </section>
+
+    <section id="slots" class="sec">
+      <h2>Знак и слоты <span class="bk-muted">под визуал</span></h2>
+      <p class="lead">Финального логотипа пока нет: временный знак — круг <code>brand-teal → brand-blue</code> с иконкой открытой книги. Все места под картинки в макетах — отдельные слои с понятными именами; при замене на реальный визуал сохраняем размеры и скругления слота.</p>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Слой</th><th>Где</th></tr></thead><tbody>
+        <tr><td><code>Logo_Header</code>, <code>Logo_Header_Desktop</code></td><td>Знак в шапке</td></tr>
+        <tr><td><code>Cover_Slot_N</code>, <code>Cover_Slot_Booking_N</code>, <code>Cover_Hero_Placeholder</code></td><td>Обложки в списках, бронях и карточке книги</td></tr>
+        <tr><td><code>Hero_Placeholder_Empty</code>, <code>_NotFound</code>, <code>_NoBookings</code>, <code>_Success</code></td><td>Иллюстрации пустых состояний и успеха</td></tr>
+        <tr><td><code>Pattern_Background_*</code></td><td>Цветные пятна фона</td></tr>
+        <tr><td><code>QR_Slot</code>, <code>QR_Scan_Slot</code></td><td>QR-код брони и видоискатель модератора</td></tr>
+        <tr><td><code>Avatar_Slot_N</code>, <code>Icon_Slot_*</code></td><td>Аватары студентов и иконки</td></tr>
+      </tbody></table></div>
+    </section>
+  </main>
+</div>
+<script>
+(function () {
+  var host = document.getElementById('qr'); if (!host) return;
+  var N = 21;
+  function f(x, y, ox, oy) { var dx = x - ox, dy = y - oy; if (dx < 0 || dy < 0 || dx > 6 || dy > 6) return null; if (dx === 0 || dy === 0 || dx === 6 || dy === 6) return true; return dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4; }
+  for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+    var on = f(x, y, 0, 0); if (on === null) on = f(x, y, N - 7, 0); if (on === null) on = f(x, y, 0, N - 7);
+    var near = (x < 8 && y < 8) || (x > N - 9 && y < 8) || (x < 8 && y > N - 9);
+    if (on === null) on = near ? false : ((x * 7 + y * 13 + x * y * 3) % 5) < 2;
+    var c = document.createElement('span'); c.style.background = on ? '#16181D' : 'transparent'; host.appendChild(c);
+  }
+})();
+</script>
+</body>
+</html>
