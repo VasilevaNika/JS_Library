@@ -249,6 +249,13 @@ export const backgrounds = {
       'radial-gradient(55% 45% at 100% 0%, rgba(110,134,242,0.4) 0%, rgba(110,134,242,0) 70%), ' +
       'radial-gradient(50% 45% at 0% 10%, rgba(255,170,130,0.3) 0%, rgba(255,170,130,0) 70%)',
   },
+  success: {
+    height: 400,
+    image:
+      'radial-gradient(100% 70% at 0% 0%, rgba(110,200,165,0.5) 0%, rgba(110,200,165,0) 60%), ' +
+      'radial-gradient(80% 60% at 100% 15%, rgba(110,134,242,0.38) 0%, rgba(110,134,242,0) 62%), ' +
+      'radial-gradient(70% 50% at 50% 95%, rgba(255,210,140,0.3) 0%, rgba(255,210,140,0) 65%)',
+  },
   desktop:
     'radial-gradient(50% 45% at 0% 0%, rgba(110,134,242,0.3) 0%, rgba(110,134,242,0) 70%), ' +
     'radial-gradient(40% 40% at 100% 0%, rgba(255,170,130,0.32) 0%, rgba(255,170,130,0) 70%), ' +

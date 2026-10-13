@@ -28,6 +28,14 @@ import type {
 
 // ───────── Внутренние помощники ─────────
 
+/** Срок брони: день, в который истекают `hours` часов, до закрытия абонемента («до 18 сентября, 20:00»). */
+export function deadlineAt(from: Millis, hours: number, closingTime: string): Millis {
+  const [h, m] = closingTime.split(':').map(Number);
+  const d = new Date(from + hours * HOUR);
+  d.setHours(h || 0, m || 0, 0, 0);
+  return d.getTime();
+}
+
 export async function uniqueCode(db: SQLiteDatabase): Promise<string> {
   for (;;) {
     const code = makeBookingCode();
@@ -85,7 +93,7 @@ export async function promoteQueue(db: SQLiteDatabase, bookId: number, at: Milli
       entry.user_id,
       bookId,
       at,
-      at + settings.queueHoldHours * HOUR,
+      deadlineAt(at, settings.queueHoldHours, settings.closingTime),
     );
     await addEvent(db, res.lastInsertRowId, 'reserved', at, 'system', null);
     await db.runAsync('DELETE FROM queue_entries WHERE id = ?', entry.id);
@@ -284,7 +292,7 @@ export async function createBooking(userId: number, bookId: number): Promise<Cre
       userId,
       bookId,
       t,
-      t + settings.pickupHours * HOUR,
+      deadlineAt(t, settings.pickupHours, settings.closingTime),
     );
     await addEvent(txn, res.lastInsertRowId, 'reserved', t, 'student', userId);
     await txn.runAsync('DELETE FROM queue_entries WHERE user_id = ? AND book_id = ?', userId, bookId);

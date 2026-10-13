@@ -15,7 +15,7 @@ export function Surface({ children, style }: BoxProps) {
   return <View style={[styles.surface, style]}>{children}</View>;
 }
 
-export type BackgroundVariant = 'search' | 'login' | 'bookings' | 'book' | 'desktop';
+export type BackgroundVariant = 'search' | 'login' | 'bookings' | 'book' | 'success' | 'desktop';
 
 /** Фон экрана: градиент ground 170° + цветные пятна сверху (у каждого раздела своя раскладка). */
 export function ScreenBackground({ variant = 'search', children, style }: BoxProps & { variant?: BackgroundVariant }) {
