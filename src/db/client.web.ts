@@ -68,6 +68,8 @@ class WebDatabase {
 let dbPromise: Promise<SQLiteDatabase> | null = null;
 
 async function init(): Promise<SQLiteDatabase> {
+  // wasm подключается как ассет Metro — для этого нужен require, import не поддерживает файлы .wasm.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const wasm = Asset.fromModule(require('sql.js/dist/sql-wasm.wasm'));
   await wasm.downloadAsync();
   const SQL = await initSqlJs({ locateFile: () => wasm.localUri ?? wasm.uri });
