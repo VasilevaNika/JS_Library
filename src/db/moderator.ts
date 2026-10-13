@@ -56,7 +56,8 @@ export type JournalPage = {
   counts: Record<JournalFilter, number>;
 };
 
-export async function getJournal(filter: JournalFilter, query = ''): Promise<JournalPage> {
+/** `filters` — выбранные чипы; пусто или 'all' — все записи. Можно выбрать несколько (дизайн-система). */
+export async function getJournal(filters: JournalFilter[], query = ''): Promise<JournalPage> {
   await refreshStatuses();
   const all = await queryJoined('');
   const words = normalizeSearch(query).split(' ').filter(Boolean);
@@ -76,7 +77,7 @@ export async function getJournal(filter: JournalFilter, query = ''): Promise<Jou
   }
 
   const rows = matched
-    .filter((b) => filter === 'all' || filterOf(b.status) === filter)
+    .filter((b) => filters.length === 0 || filters.includes('all') || filters.includes(filterOf(b.status)))
     .sort((a, b) => URGENCY[a.status] - URGENCY[b.status] || urgencyDate(a) - urgencyDate(b));
 
   return { rows, total: matched.length, counts };
