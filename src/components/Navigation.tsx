@@ -162,7 +162,7 @@ export function MenuItem({
       accessibilityState={{ selected: !!current, disabled: !!disabled }}
       style={[styles.menuItem, caption ? styles.menuItemTall : null, current && styles.menuItemCurrent]}
     >
-      <Icon name={icon} size={iconSize.button} color={colors.ink} />
+      <Icon name={icon} size={iconSize.iconButton} color={colors.ink} />
       <View style={styles.flex}>
         <Text style={[styles.menuText, current && styles.semibold]}>{label}</Text>
         {caption ? <AppText variant="caption" tone="secondary">{caption}</AppText> : null}

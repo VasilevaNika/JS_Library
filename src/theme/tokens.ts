@@ -46,6 +46,7 @@ export const ui = {
   overlayStrong: 'rgba(22,24,29,0.4)',
   overlayMenu: 'rgba(22,24,29,0.32)',
   sheet: 'rgba(246,247,249,0.96)',
+  menuPanel: 'rgba(246,247,249,0.92)',
   sheetHandle: '#C9CDD3',
   chipLgBg: 'rgba(255,255,255,0.7)',
   track: 'rgba(22,24,29,0.06)',
