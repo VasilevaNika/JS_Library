@@ -8,6 +8,7 @@ export default function HomeScreen() {
         { label: 'Результаты', href: { pathname: '/search/results', params: { q: 'алгоритмы' } } },
         { label: 'Карточка книги', href: '/book/1' },
         { label: 'Меню', href: '/menu' },
+        { label: 'Демо компонентов', href: '/dev/components' },
       ]}
     />
   );

@@ -37,6 +37,50 @@ export const colors = {
   scanLine: '#57C08A',
 } as const;
 
+/**
+ * Значения, которые в экспорте экранов заданы инлайном, а не переменными :root.
+ * Собраны здесь, чтобы в компонентах не было хардкода.
+ */
+export const ui = {
+  overlay: 'rgba(22,24,29,0.36)',
+  overlayStrong: 'rgba(22,24,29,0.4)',
+  overlayMenu: 'rgba(22,24,29,0.32)',
+  sheet: 'rgba(246,247,249,0.96)',
+  sheetHandle: '#C9CDD3',
+  chipLgBg: 'rgba(255,255,255,0.7)',
+  track: 'rgba(22,24,29,0.06)',
+  progressTrack: 'rgba(22,24,29,0.08)',
+  panelDivider: 'rgba(22,24,29,0.07)',
+  disabledBg: '#E3E5E8',
+  disabledFg: '#5B616B',
+  dangerDisabledBg: '#F4E9E7',
+  dangerDisabledFg: '#B9837C',
+  switchOff: '#C9CDD3',
+  statDiscTo: '#E3E6EA',
+  highlightRowBg: '#FFF8EA',
+  selectedRowBg: '#F4F5F7',
+  errorRowBg: '#FFF7F6',
+  mappingBg: '#EEF2FF',
+  dropzoneBorder: '#B9BEC6',
+  scanCenter: '#3B4250',
+  scanFrame: '#FFFFFF',
+  scanCaption: 'rgba(255,255,255,0.8)',
+  scanGlow: 'rgba(87,192,138,0.6)',
+  onDarkTrack: 'rgba(255,255,255,0.18)',
+  countOnTone: 'rgba(255,255,255,0.6)',
+  countOnNeutral: 'rgba(255,255,255,0.7)',
+  coverLine: 'rgba(255,255,255,0.8)',
+  coverLine2: 'rgba(255,255,255,0.5)',
+  coverLineDark: 'rgba(22,24,29,0.55)',
+  coverLineGraphite: 'rgba(230,200,140,0.9)',
+  coverRing: 'rgba(255,255,255,0.12)',
+  logoHighlight: 'inset 0 1px 0 rgba(255,255,255,0.3)',
+  skeleton: '#E3E5E8',
+  skeletonTo: '#EEF0F2',
+  skeletonGlass: 'rgba(255,255,255,0.5)',
+  skeletonStat: 'rgba(255,255,255,0.55)',
+} as const;
+
 export type StatusTone = 'available' | 'busy' | 'overdue' | 'neutral';
 
 export const status: Record<StatusTone, { bg: string; fg: string; dot: string }> = {
@@ -104,6 +148,17 @@ export const shadows = {
   coverSm: 'inset 3px 0 0 rgba(0,0,0,0.18), 0 4px 10px rgba(22,24,29,0.16)',
   coverLg: 'inset 6px 0 0 rgba(0,0,0,0.2), 0 20px 40px rgba(22,24,29,0.22), 0 2px 6px rgba(22,24,29,0.1)',
   dialog: '0 20px 48px rgba(22,24,29,0.25)',
+  dialogDesktop: '0 24px 64px rgba(22,24,29,0.3)',
+  sheet: '0 -12px 40px rgba(22,24,29,0.2)',
+  bookPanel: '0 -12px 32px rgba(22,24,29,0.06)',
+  toast: '0 12px 32px rgba(22,24,29,0.3)',
+  menu: '-12px 0 40px rgba(22,24,29,0.18)',
+  iconCircle: '0 8px 20px rgba(22,24,29,0.08)',
+  coverMd: 'inset 5px 0 0 rgba(0,0,0,0.18), 0 16px 32px rgba(22,24,29,0.2)',
+  ringFocus: '0 0 0 3px #2B47C9',
+  ringError: '0 0 0 2px #D43B2F',
+  ringWarning: '0 0 0 2px #D08A0B',
+  ringOverdueCard: 'inset 0 0 0 1px #F3CBC5',
 } as const;
 
 /** Высоты элементов. */
@@ -166,6 +221,69 @@ export const gradients = {
   auraPeach: `radial-gradient(85% 65% at 100% 8%, ${colors.auraPeach} 0%, rgba(255,170,130,0) 58%)`,
   auraMint: `radial-gradient(80% 55% at 55% 85%, ${colors.auraMint} 0%, rgba(110,200,165,0) 62%)`,
 } as const;
+
+/** Цветные пятна фона по разделам (слои Pattern_Background_* в макетах). */
+export const backgrounds = {
+  search: {
+    height: 380,
+    image: `${gradients.auraViolet}, ${gradients.auraPeach}, ${gradients.auraMint}`,
+  },
+  login: {
+    height: 420,
+    image:
+      'radial-gradient(100% 70% at 0% 0%, rgba(110,134,242,0.42) 0%, rgba(110,134,242,0) 60%), ' +
+      'radial-gradient(80% 60% at 100% 20%, rgba(110,200,165,0.38) 0%, rgba(110,200,165,0) 62%), ' +
+      'radial-gradient(70% 50% at 60% 90%, rgba(255,170,130,0.3) 0%, rgba(255,170,130,0) 65%)',
+  },
+  bookings: {
+    height: 360,
+    image:
+      'radial-gradient(100% 70% at 100% 0%, rgba(110,134,242,0.4) 0%, rgba(110,134,242,0) 60%), ' +
+      'radial-gradient(80% 60% at 0% 20%, rgba(255,170,130,0.38) 0%, rgba(255,170,130,0) 62%)',
+  },
+  book: {
+    height: 440,
+    image:
+      'radial-gradient(60% 55% at 75% 42%, rgba(79,163,165,0.62) 0%, rgba(79,163,165,0) 70%), ' +
+      'radial-gradient(55% 45% at 100% 0%, rgba(110,134,242,0.4) 0%, rgba(110,134,242,0) 70%), ' +
+      'radial-gradient(50% 45% at 0% 10%, rgba(255,170,130,0.3) 0%, rgba(255,170,130,0) 70%)',
+  },
+  desktop:
+    'radial-gradient(50% 45% at 0% 0%, rgba(110,134,242,0.3) 0%, rgba(110,134,242,0) 70%), ' +
+    'radial-gradient(40% 40% at 100% 0%, rgba(255,170,130,0.32) 0%, rgba(255,170,130,0) 70%), ' +
+    'radial-gradient(45% 45% at 85% 100%, rgba(110,200,165,0.25) 0%, rgba(110,200,165,0) 70%), ' +
+    gradients.ground,
+  logo: `linear-gradient(140deg, ${colors.brandTeal} 0%, ${colors.brandBlue} 100%)`,
+  statDisc: `linear-gradient(145deg, ${colors.surface} 0%, #E3E6EA 100%)`,
+  scan: 'radial-gradient(70% 70% at 50% 40%, #3B4250 0%, #1B1E24 100%)',
+  skeleton: 'linear-gradient(90deg, #E3E5E8, #EEF0F2)',
+  skeletonBlock: 'linear-gradient(160deg, #E3E5E8, #F1F2F4)',
+  shelfCard:
+    'radial-gradient(70% 60% at 15% 10%, rgba(110,134,242,0.35), rgba(110,134,242,0) 70%), linear-gradient(180deg, #F6F7FB 0%, #FFFFFF 100%)',
+  shelfNotFound:
+    'radial-gradient(80% 70% at 20% 10%, rgba(110,134,242,0.35), rgba(110,134,242,0) 70%), linear-gradient(180deg, #F6F7FB, #FFFFFF)',
+  shelfNoBookings:
+    'radial-gradient(70% 60% at 85% 15%, rgba(110,134,242,0.35), rgba(110,134,242,0) 70%), radial-gradient(60% 60% at 10% 30%, rgba(110,200,165,0.35), rgba(110,200,165,0) 70%), linear-gradient(180deg, #F6F7FB 0%, #FFFFFF 100%)',
+  shelfPlank: 'linear-gradient(180deg, #D9DCE1, #C5C9CF)',
+  shelfPlankFlat: '#C5C9CF',
+  shelfGapBorder: '#9AA0A9',
+  successBadge: 'linear-gradient(110deg, rgba(221,240,228,0.95) 0%, rgba(232,236,255,0.9) 100%)',
+  successCheck: 'linear-gradient(140deg, #2E9B5F, #57C08A)',
+} as const;
+
+/** Градиент обложки по цвету: 160°, from → to. */
+export function coverGradient(color: CoverColor, reverse = false): string {
+  const c = covers[color];
+  return reverse
+    ? `linear-gradient(180deg, ${c.to}, ${c.from})`
+    : `linear-gradient(${coverGradientAngle}deg, ${c.from}, ${c.to})`;
+}
+
+/** Градиент аватара: 140°, как у обложек. */
+export function avatarGradient(color: CoverColor): string {
+  const c = covers[color];
+  return `linear-gradient(140deg, ${c.from}, ${c.to})`;
+}
 
 export const tokens = {
   colors,

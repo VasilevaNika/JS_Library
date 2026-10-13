@@ -1,0 +1,16 @@
+// Компоненты дизайн-системы (spec.md §6). Экраны собираются только из них.
+export * from './AppText';
+export * from './BookCover';
+export * from './BookItems';
+export * from './Button';
+export * from './Feedback';
+export * from './Fields';
+export * from './Icon';
+export * from './Logo';
+export * from './Moderator';
+export * from './Navigation';
+export * from './QR';
+export * from './StatBlock';
+export * from './States';
+export * from './StatusChip';
+export * from './Surfaces';
