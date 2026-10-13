@@ -51,34 +51,43 @@ export function AppText({ variant = 'body', tone = 'ink', tabular, align, style,
   );
 }
 
-/** Двухцветный заголовок: ключевая часть ink, связка ink-muted («Мои *брони*»). */
+/** Двухцветный заголовок: ключевая часть ink, связка ink-muted («Мои *брони*», «Какая книга *вам* нужна?»). */
 export function TwoToneTitle({
   text,
   muted,
   mutedFirst = false,
+  parts,
   variant = 'display',
   align,
   style,
 }: {
-  text: string;
+  text?: string;
   muted?: string;
   mutedFirst?: boolean;
+  /** Произвольная раскладка: приглушённая часть может стоять в середине. */
+  parts?: { text: string; muted?: boolean }[];
   variant?: TextVariant;
   align?: TextStyle['textAlign'];
   style?: StyleProp<TextStyle>;
 }) {
-  const mutedNode = muted ? <Text style={{ color: colors.inkMuted }}>{muted}</Text> : null;
+  const list =
+    parts ??
+    (mutedFirst
+      ? [...(muted ? [{ text: muted, muted: true }] : []), { text: text ?? '' }]
+      : [{ text: text ?? '' }, ...(muted ? [{ text: muted, muted: true }] : [])]);
   return (
     <AppText variant={variant} align={align} style={style} accessibilityRole="header">
-      {mutedFirst && mutedNode}
-      {mutedFirst && muted ? ' ' : ''}
-      {text}
-      {!mutedFirst && muted ? ' ' : ''}
-      {!mutedFirst && mutedNode}
+      {list.map((p, i) => (
+        <Text key={i} style={p.muted ? styles.muted : undefined}>
+          {i > 0 ? ' ' : ''}
+          {p.text}
+        </Text>
+      ))}
     </AppText>
   );
 }
 
 const styles = StyleSheet.create({
   tabular: { fontVariant: ['tabular-nums'] },
+  muted: { color: colors.inkMuted },
 });

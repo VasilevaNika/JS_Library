@@ -8,6 +8,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
+import { SessionProvider } from '@/hooks/useSession';
 import { fonts } from '@/theme/tokens';
 
 SplashScreen.preventAutoHideAsync();
@@ -26,17 +27,20 @@ export default function RootLayout() {
   if (!loaded && !error) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="book/[id]" />
-      <Stack.Screen name="booking/[id]" />
-      <Stack.Screen name="booking-confirmed/[id]" options={{ gestureEnabled: false }} />
-      <Stack.Screen name="profile-edit" />
-      <Stack.Screen name="menu" options={{ presentation: 'transparentModal', animation: 'fade' }} />
-      <Stack.Screen name="login" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="reset-password" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="moderator" />
-      <Stack.Screen name="dev/components" />
-    </Stack>
+    <SessionProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="book/[id]" />
+        <Stack.Screen name="booking/[id]" />
+        <Stack.Screen name="booking-confirmed/[id]" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="profile-edit" />
+        <Stack.Screen name="menu" options={{ presentation: 'transparentModal', animation: 'fade' }} />
+        <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="reset-password" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="moderator" />
+        <Stack.Screen name="dev/components" />
+        <Stack.Screen name="dev/index" />
+      </Stack>
+    </SessionProvider>
   );
 }

@@ -21,10 +21,20 @@ import { Icon, type IconName } from './Icon';
 import { Logo } from './Logo';
 
 /** Стеклянная таблетка со знаком и названием. */
-export function BrandBadge({ onPress, desktop }: { onPress?: () => void; desktop?: boolean }) {
+export function BrandBadge({
+  onPress,
+  onLongPress,
+  desktop,
+}: {
+  onPress?: () => void;
+  /** Только в dev-сборке: открыть меню отладки. */
+  onLongPress?: () => void;
+  desktop?: boolean;
+}) {
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={onLongPress}
       accessibilityRole={onPress ? 'link' : undefined}
       accessibilityLabel="Библиотека кампуса"
       style={[styles.badge, desktop && styles.badgeDesktop]}
@@ -39,6 +49,7 @@ type HeaderProps =
   | {
       variant: 'brand';
       onBrandPress?: () => void;
+      onBrandLongPress?: () => void;
       action: { icon: 'menu' | 'close'; label: string; onPress: () => void };
     }
   | { variant: 'back'; title: string; backLabel: string; onBack: () => void }
@@ -51,7 +62,7 @@ export function Header(props: HeaderProps) {
     case 'brand':
       return (
         <View style={[styles.header, styles.between]}>
-          <BrandBadge onPress={props.onBrandPress} />
+          <BrandBadge onPress={props.onBrandPress} onLongPress={props.onBrandLongPress} />
           <IconButton
             icon={props.action.icon}
             accessibilityLabel={props.action.label}

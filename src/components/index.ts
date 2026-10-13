@@ -5,6 +5,7 @@ export * from './BookItems';
 export * from './Button';
 export * from './Feedback';
 export * from './Fields';
+export * from './HomeItems';
 export * from './Icon';
 export * from './Logo';
 export * from './Moderator';
