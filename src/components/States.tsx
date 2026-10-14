@@ -116,10 +116,27 @@ export function StatusIcon({
 
 // ───────── Иллюстрации полки ─────────
 
-export type ShelfVariant = 'empty' | 'noBookings' | 'notFound';
+export type ShelfVariant = 'empty' | 'noBookings' | 'notFound' | 'catalogEmpty';
 
 /** Слоты Hero_Placeholder_*: полка с книгами. */
 export function ShelfIllustration({ variant, label }: { variant: ShelfVariant; label: string }) {
+  if (variant === 'catalogEmpty') {
+    return (
+      <View accessibilityRole="image" accessibilityLabel={label} style={styles.catalog}>
+        <View style={styles.catalogBooks}>
+          <View
+            style={[
+              styles.shelfBook,
+              styles.leaningLess,
+              { width: 20, height: 84, backgroundColor: covers.teal.from, experimental_backgroundImage: coverGradient('teal', true) },
+            ]}
+          />
+          <View style={styles.flex1} />
+        </View>
+        <View style={[styles.plank, { height: 8 }]} />
+      </View>
+    );
+  }
   if (variant === 'notFound') {
     return (
       <View accessibilityRole="image" accessibilityLabel={label} style={styles.nf}>
@@ -235,6 +252,9 @@ const styles = StyleSheet.create({
   shelfBig: { height: 220, paddingHorizontal: 48, paddingBottom: 28, experimental_backgroundImage: backgrounds.shelfNoBookings },
   shelfBooks: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1], paddingHorizontal: space[2] },
   shelfBook: { borderRadius: 3 },
+  catalog: { width: 220 },
+  catalogBooks: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1], height: 96, paddingHorizontal: space[6] },
+  leaningLess: { transform: [{ rotate: '-12deg' }], transformOrigin: 'bottom right' },
   leaning: { transform: [{ rotate: '-14deg' }], transformOrigin: 'bottom right' },
   plank: { borderRadius: 4, backgroundColor: backgrounds.shelfPlankFlat, experimental_backgroundImage: backgrounds.shelfPlank },
 
