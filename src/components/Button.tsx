@@ -11,7 +11,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-import { colors, iconSize, radius, shadows, size as sizes, status, typography, ui } from '@/theme/tokens';
+import { colors, iconSize, radius, shadows, size as sizes, space, status, typography, ui } from '@/theme/tokens';
 
 import { Icon, type IconName } from './Icon';
 
@@ -42,9 +42,9 @@ const VARIANT: Record<ButtonVariant, { bg: string; fg: string; border?: string; 
 };
 
 const SIZE: Record<ButtonSize, { height: number; padding: number; text: TextStyle }> = {
-  lg: { height: sizes.controlLg, padding: 24, text: typography.button },
-  md: { height: sizes.controlMd, padding: 16, text: typography.buttonSm },
-  sm: { height: sizes.controlSm, padding: 14, text: { ...typography.buttonSm, fontSize: 13, lineHeight: 18 } },
+  lg: { height: sizes.controlLg, padding: space[6], text: typography.button },
+  md: { height: sizes.controlMd, padding: space[4], text: typography.buttonSm },
+  sm: { height: sizes.controlSm, padding: space[3.5], text: typography.buttonXs },
 };
 
 type Props = {
@@ -97,7 +97,7 @@ export function Button({
           height: height ?? s.height,
           paddingHorizontal: s.padding,
           backgroundColor: bg,
-          borderColor: v.border ?? 'transparent',
+          borderColor: v.border ?? ui.transparent,
           borderWidth: v.border && !off ? 1 : 0,
           boxShadow: v.shadow && !off ? v.shadow : undefined,
         },
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
-    gap: 8,
+    gap: space[2],
     borderRadius: radius.pill,
   },
   block: { alignSelf: 'stretch' },
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     borderColor: colors.glassEdge,
     boxShadow: shadows.glass,
   },
-  iconPlain: { borderRadius: 16, backgroundColor: colors.surface },
+  iconPlain: { borderRadius: radius.control, backgroundColor: colors.surface },
   link: { fontFamily: typography.label.fontFamily, textDecorationLine: 'underline' },
-  row: { flexDirection: 'row', gap: 8 },
+  row: { flexDirection: 'row', gap: space[2] },
 });

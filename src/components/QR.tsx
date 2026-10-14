@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { colors, fonts, radius, shadows, space } from '@/theme/tokens';
+import { colors, radius, shadows, space, typography } from '@/theme/tokens';
 
 import { AppText } from './AppText';
 
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
   frame: { borderWidth: 1, borderColor: colors.line, flexShrink: 0 },
   frameSm: { width: 112, height: 112, padding: space[2], borderRadius: radius.icon },
   frameLg: { width: 200, height: 200, padding: space[3], borderRadius: radius.lg },
-  rowText: { flex: 1, minWidth: 0, gap: 6 },
-  code: { fontFamily: fonts.semibold, fontSize: 22, lineHeight: 28, letterSpacing: 1.76, fontVariant: ['tabular-nums'], color: colors.ink },
+  rowText: { flex: 1, minWidth: 0, gap: space[1.5] },
+  code: { ...typography.code, fontVariant: ['tabular-nums'], color: colors.ink },
   center: {
     alignItems: 'center',
     gap: space[3],
@@ -94,5 +94,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     boxShadow: shadows.glass,
   },
-  codeLg: { fontFamily: fonts.semibold, fontSize: 28, lineHeight: 34, letterSpacing: 2.8, fontVariant: ['tabular-nums'], color: colors.ink },
+  codeLg: { ...typography.codeLg, fontVariant: ['tabular-nums'], color: colors.ink },
 });

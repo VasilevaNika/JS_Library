@@ -149,6 +149,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   name: { ...typography.body, lineHeight: 20, fontFamily: fonts.semibold, color: colors.ink },
-  closeBtn: { borderRadius: 16 },
+  closeBtn: { borderRadius: radius.control },
   bottom: { marginTop: 'auto', gap: space[3] },
 });

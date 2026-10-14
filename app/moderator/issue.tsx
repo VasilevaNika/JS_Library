@@ -14,6 +14,8 @@ import {
   DateField,
   Dialog,
   EmptyState,
+  LoadError,
+  LoadingBlock,
   Notice,
   Panel,
   ProgressBar,
@@ -233,7 +235,11 @@ export default function IssueScreen() {
           }
         >
           <ProgressBar value={r && r.total > 0 ? r.done / r.total : 1} />
-          {r && r.groups.length === 0 ? (
+          {recon.status === 'loading' ? (
+            <LoadingBlock />
+          ) : recon.status === 'error' && !r ? (
+            <LoadError container="card" onRetry={() => void recon.reload({ showLoading: true })} />
+          ) : r && r.groups.length === 0 ? (
             <EmptyState
               container="card"
               style={styles.allDone}
@@ -369,9 +375,9 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: space[6], paddingBottom: space[6] },
   columns: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', gap: space[4] },
   half: { flexGrow: 1, flexShrink: 1, flexBasis: 520, minWidth: 0 },
-  found: { gap: space[1], paddingVertical: 14, paddingHorizontal: space[4], borderRadius: radius.xl, backgroundColor: colors.surface },
+  found: { gap: space[1], paddingVertical: space[3.5], paddingHorizontal: space[4], borderRadius: radius.xl, backgroundColor: colors.surface },
   foundHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[2], paddingBottom: space[2] },
-  foundWho: { flexDirection: 'row', alignItems: 'center', gap: 10, flexShrink: 1 },
+  foundWho: { flexDirection: 'row', alignItems: 'center', gap: space[2.5], flexShrink: 1 },
   foundName: { ...typography.body, lineHeight: 20, fontFamily: fonts.semibold, color: colors.ink },
   foundRow: {
     flexDirection: 'row',
@@ -384,11 +390,11 @@ const styles = StyleSheet.create({
   },
   foundDue: { minHeight: 48 },
   multi: { gap: space[2], padding: space[3], borderRadius: radius.xl, backgroundColor: colors.surface },
-  multiHead: { paddingTop: 2, paddingHorizontal: space[1], paddingBottom: 6 },
+  multiHead: { paddingTop: space[0.5], paddingHorizontal: space[1], paddingBottom: space[1.5] },
   multiFoot: { padding: space[1] },
   bookTitle: { ...typography.label, fontFamily: fonts.semibold, color: colors.ink },
   group: { gap: space[2] },
-  shelf: { fontFamily: fonts.semibold, fontSize: 12, letterSpacing: 0.24, color: colors.inkSecondary, paddingHorizontal: space[2] },
+  shelf: { ...typography.overline, color: colors.inkSecondary, paddingHorizontal: space[2] },
   allDone: { paddingVertical: 64, gap: space[3] },
   muted: { color: colors.inkMuted },
 });

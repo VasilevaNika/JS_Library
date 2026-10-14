@@ -4,6 +4,7 @@ import { StyleSheet, View, type DimensionValue, type StyleProp, type ViewStyle }
 import { backgrounds, colors, coverGradient, covers, fonts, radius, shadows, space, status, ui, type StatusTone } from '@/theme/tokens';
 
 import { AppText } from './AppText';
+import { Button, Spinner } from './Button';
 import { Icon, type IconName } from './Icon';
 
 // ───────── Skeleton ─────────
@@ -218,7 +219,47 @@ export function EmptyState({
   );
 }
 
+/** Ошибка загрузки (в макетах — «Не удалось загрузить брони»): иконка повтора, текст и «Повторить». */
+export function LoadError({
+  title = 'Не удалось загрузить данные',
+  onRetry,
+  container = 'glass',
+}: {
+  title?: string;
+  onRetry: () => void;
+  container?: 'glass' | 'card';
+}) {
+  return (
+    <EmptyState
+      container={container}
+      visual={<StatusIcon icon="refresh" tone="busy" />}
+      title={title}
+      text="Проверьте подключение и попробуйте ещё раз."
+      actions={
+        <Button
+          label="Повторить"
+          variant="secondary"
+          block={container === 'glass'}
+          onPress={onRetry}
+          style={container === 'card' ? styles.centerSelf : undefined}
+        />
+      }
+    />
+  );
+}
+
+/** Загрузка экрана без своего скелетона: спиннер по центру. */
+export function LoadingBlock() {
+  return (
+    <View accessibilityLabel="Загрузка" accessibilityState={{ busy: true }} style={styles.loadingBlock}>
+      <Spinner />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  centerSelf: { alignSelf: 'center' },
+  loadingBlock: { paddingVertical: space[8], alignItems: 'center' },
   flex1: { flex: 1 },
   flex2: { flex: 2 },
   flex14: { flex: 1.4 },
@@ -227,13 +268,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: space[3],
-    padding: 10,
+    padding: space[2.5],
     borderRadius: radius.lg,
     backgroundColor: colors.surface,
   },
   skLines: { flex: 1, gap: space[2] },
   skLinesTop: { paddingTop: space[2] },
-  skCard: { gap: 10, padding: 10, borderRadius: radius.lg, backgroundColor: colors.surface },
+  skCard: { gap: space[2.5], padding: space[2.5], borderRadius: radius.lg, backgroundColor: colors.surface },
   skCardTop: { flexDirection: 'row', gap: space[3] },
   skCardFooter: { flexDirection: 'row', justifyContent: 'space-between' },
   skStats: { flexDirection: 'row', gap: space[2], marginTop: space[6] },
@@ -251,7 +292,7 @@ const styles = StyleSheet.create({
   shelfSmall: { height: 156, paddingHorizontal: space[6], paddingBottom: space[5], experimental_backgroundImage: backgrounds.shelfCard },
   shelfBig: { height: 220, paddingHorizontal: 48, paddingBottom: 28, experimental_backgroundImage: backgrounds.shelfNoBookings },
   shelfBooks: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1], paddingHorizontal: space[2] },
-  shelfBook: { borderRadius: 3 },
+  shelfBook: { borderRadius: radius.coverSpine },
   catalog: { width: 220 },
   catalogBooks: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1], height: 96, paddingHorizontal: space[6] },
   leaningLess: { transform: [{ rotate: '-12deg' }], transformOrigin: 'bottom right' },
@@ -266,7 +307,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'flex-end',
     paddingHorizontal: space[3],
-    paddingBottom: 14,
+    paddingBottom: space[3.5],
     backgroundColor: colors.surface,
     experimental_backgroundImage: backgrounds.shelfNotFound,
   },

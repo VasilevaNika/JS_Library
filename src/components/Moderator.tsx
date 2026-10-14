@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import {
+  avatarFont,
   avatarGradient,
   backgrounds,
   colors,
@@ -272,7 +273,9 @@ export function Avatar({
   size?: number;
   children?: ReactNode;
 }) {
-  const fontSize = size >= 80 ? 28 : size >= 64 ? 22 : size >= 48 ? 16 : size >= 40 ? 13 : 11;
+  // Ближайший размер из токенов не больше диаметра.
+  const key = (Object.keys(avatarFont).map(Number) as (keyof typeof avatarFont)[]).filter((k) => k <= size).pop() ?? 28;
+  const fontSize = avatarFont[key];
   return (
     <View
       accessibilityElementsHidden
@@ -420,13 +423,22 @@ const styles = StyleSheet.create({
   toolbarSearch: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: space[2.5],
     height: 44,
     paddingHorizontal: space[4],
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
   },
-  toolbarInput: { flex: 1, minWidth: 0, height: '100%', padding: 0, fontFamily: fonts.regular, fontSize: 14, color: colors.ink, outlineWidth: 0 },
+  toolbarInput: {
+    flex: 1,
+    minWidth: 0,
+    height: '100%',
+    padding: 0,
+    fontFamily: typography.inputSm.fontFamily,
+    fontSize: typography.inputSm.fontSize,
+    color: colors.ink,
+    outlineWidth: 0,
+  },
   filter: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -445,8 +457,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  counter: { flex: 1, height: 60, justifyContent: 'center', gap: 2, paddingHorizontal: space[5], borderRadius: radius.pill },
-  counterValue: { fontFamily: fonts.semibold, fontSize: 20, lineHeight: 24 },
+  counter: { flex: 1, height: 60, justifyContent: 'center', gap: space[0.5], paddingHorizontal: space[5], borderRadius: radius.pill },
+  counterValue: typography.counter,
 
   table: { borderRadius: radius.xl, backgroundColor: colors.surface, overflow: 'hidden' },
   tableScroll: { flexGrow: 1 },
@@ -454,7 +466,7 @@ const styles = StyleSheet.create({
   thead: { height: 40, borderBottomWidth: 1, borderBottomColor: colors.divider },
   trBody: { minHeight: 44, borderBottomWidth: 1, borderBottomColor: colors.surfaceSunken },
   th: { ...typography.micro, color: colors.inkSecondary },
-  td: { fontFamily: fonts.regular, fontSize: 13, lineHeight: 17 },
+  td: typography.table,
 
   avatar: { alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   avatarText: { fontFamily: fonts.semibold, color: colors.onDark },
@@ -478,10 +490,10 @@ const styles = StyleSheet.create({
   },
   frame: { width: 112, height: 112 },
   corner: { position: 'absolute', width: 24, height: 24, borderColor: ui.scanFrame },
-  tl: { left: 0, top: 0, borderLeftWidth: 3, borderTopWidth: 3, borderTopLeftRadius: 10 },
-  tr2: { right: 0, top: 0, borderRightWidth: 3, borderTopWidth: 3, borderTopRightRadius: 10 },
-  bl: { left: 0, bottom: 0, borderLeftWidth: 3, borderBottomWidth: 3, borderBottomLeftRadius: 10 },
-  br: { right: 0, bottom: 0, borderRightWidth: 3, borderBottomWidth: 3, borderBottomRightRadius: 10 },
+  tl: { left: 0, top: 0, borderLeftWidth: 3, borderTopWidth: 3, borderTopLeftRadius: radius.corner },
+  tr2: { right: 0, top: 0, borderRightWidth: 3, borderTopWidth: 3, borderTopRightRadius: radius.corner },
+  bl: { left: 0, bottom: 0, borderLeftWidth: 3, borderBottomWidth: 3, borderBottomLeftRadius: radius.corner },
+  br: { right: 0, bottom: 0, borderRightWidth: 3, borderBottomWidth: 3, borderBottomRightRadius: radius.corner },
   scanLine: {
     position: 'absolute',
     left: 10,
@@ -498,19 +510,18 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: space[3],
     textAlign: 'center',
-    fontFamily: fonts.regular,
-    fontSize: 12,
+    ...typography.microRegular,
     color: ui.scanCaption,
   },
 
   progress: { height: 8, borderRadius: 4, backgroundColor: ui.progressTrack, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 4, backgroundColor: status.available.dot },
 
-  recon: { gap: 10, paddingVertical: space[3], paddingHorizontal: 14, borderRadius: radius.lg, backgroundColor: colors.surface },
+  recon: { gap: space[2.5], paddingVertical: space[3], paddingHorizontal: space[3.5], borderRadius: radius.lg, backgroundColor: colors.surface },
   reconHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[3] },
   reconActions: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
 
-  timeline: { gap: 14, paddingHorizontal: space[2] },
+  timeline: { gap: space[3.5], paddingHorizontal: space[2] },
   event: { flexDirection: 'row', gap: space[3] },
   dot: { width: 10, height: 10, marginTop: 5, borderRadius: 5, flexShrink: 0 },
 

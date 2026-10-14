@@ -8,20 +8,21 @@ import {
   BookCover,
   Button,
   Cell,
+  type Column,
   DataTable,
   EmptyState,
+  LoadError,
+  LoadingBlock,
   Panel,
   ShelfIllustration,
-  Spinner,
   StatusChip,
   StatusIcon,
   ToolbarSearch,
-  type Column,
 } from '@/components';
 import { countBooks, listCatalog, type BookWithAvailability, type CatalogStatus } from '@/db';
 import { useQuery } from '@/hooks/useQuery';
 import { plural } from '@/lib/format';
-import { colors, fonts, space, type StatusTone } from '@/theme/tokens';
+import { colors, fonts, space, type StatusTone, typography } from '@/theme/tokens';
 
 const STATUS: Record<CatalogStatus, { label: string; tone: StatusTone }> = {
   available: { label: 'В наличии', tone: 'available' },
@@ -81,19 +82,11 @@ export default function CatalogScreen() {
   let body;
   if (q.status === 'loading') {
     body = (
-      <View style={styles.loading} accessibilityLabel="Загрузка">
-        <Spinner />
-      </View>
+      <LoadingBlock />
     );
   } else if (q.status === 'error' && !q.data) {
     body = (
-      <EmptyState
-        container="card"
-        visual={<StatusIcon icon="refresh" tone="busy" />}
-        title="Не удалось загрузить каталог"
-        text="Проверьте подключение и попробуйте ещё раз."
-        actions={<Button label="Повторить" variant="secondary" onPress={() => void q.reload({ showLoading: true })} style={styles.center} />}
-      />
+      <LoadError container="card" title="Не удалось загрузить каталог" onRetry={() => void q.reload({ showLoading: true })} />
     );
   } else if (!hasBooks) {
     body = (
@@ -170,10 +163,9 @@ const styles = StyleSheet.create({
   regular: { fontFamily: fonts.regular },
   content: { flexGrow: 1, paddingHorizontal: space[6], paddingBottom: space[6] },
   panel: { flexGrow: 1 },
-  loading: { paddingVertical: space[8], alignItems: 'center' },
   empty: { paddingVertical: 80 },
   row: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: space[2] },
   bookCell: { flexDirection: 'row', alignItems: 'center', gap: space[3], paddingVertical: space[2] },
-  count: { fontFamily: fonts.medium, fontSize: 13, fontVariant: ['tabular-nums'], color: colors.ink },
+  count: { ...typography.tableMedium, fontVariant: ['tabular-nums'], color: colors.ink },
   footer: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: space[2] },
 });

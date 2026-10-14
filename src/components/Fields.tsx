@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 48,
-    paddingHorizontal: 18,
+    paddingHorizontal: space[4.5],
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
   },
@@ -389,12 +389,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceSunken,
   },
   withButton: { paddingRight: space[2], gap: space[3] },
-  withPrefix: { gap: 2 },
+  withPrefix: { gap: space[0.5] },
   prefix: { ...typography.headline, fontFamily: fonts.regular, color: colors.inkSecondary },
   // outlineWidth: 0 — у поля своё кольцо фокуса; убираем стандартную обводку браузера в web-превью.
   input: { flex: 1, minWidth: 0, height: '100%', padding: 0, color: colors.ink, outlineWidth: 0 },
-  inputTextLg: { fontFamily: fonts.regular, fontSize: 17 },
-  inputTextMd: { fontFamily: fonts.regular, fontSize: 15 },
+  inputTextLg: { fontFamily: typography.input.fontFamily, fontSize: typography.input.fontSize },
+  inputTextMd: { fontFamily: typography.inputMd.fontFamily, fontSize: typography.inputMd.fontSize },
   inputMultiline: { ...typography.label, fontFamily: fonts.regular, textAlignVertical: 'top' },
   tabular: { fontVariant: ['tabular-nums'] },
   eye: {
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
   },
-  searchInput: { fontFamily: fonts.regular, fontSize: 17 },
+  searchInput: { fontFamily: typography.input.fontFamily, fontSize: typography.input.fontSize },
   searchIcon: {
     width: sizes.controlMd,
     height: sizes.controlMd,
@@ -454,8 +454,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: space[3],
-    padding: 10,
-    borderRadius: 16,
+    padding: space[2.5],
+    borderRadius: radius.control,
     backgroundColor: ui.selectedRowBg,
   },
   checkbox: {
@@ -488,8 +488,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceSunken,
   },
   stepOff: { opacity: 0.5 },
-  stepSign: { fontFamily: fonts.regular, fontSize: 18, color: colors.ink },
-  stepValue: { fontFamily: fonts.semibold, fontSize: 16 },
+  stepSign: { ...typography.stepperSign, color: colors.ink },
+  stepValue: { fontFamily: typography.button.fontFamily, fontSize: typography.button.fontSize },
 
   select: {
     flexDirection: 'row',
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 40,
     paddingLeft: space[4],
-    paddingRight: 14,
+    paddingRight: space[3.5],
     borderRadius: radius.pill,
   },
   date: {

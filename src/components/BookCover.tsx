@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View, type DimensionValue } from 'react-native';
 
-import { colors, coverGradient, covers, fonts, radius, shadows, ui, type CoverColor } from '@/theme/tokens';
+import { colors, type CoverColor, coverGradient, covers, radius, shadows, space, typography, ui } from '@/theme/tokens';
 
 export type CoverSize = 'sm' | 'md' | 'lg';
 
@@ -97,7 +97,7 @@ export function BookCover({
 
 const styles = StyleSheet.create({
   cover: { overflow: 'hidden', flexShrink: 0 },
-  lg: { paddingTop: 18, paddingRight: 14, paddingBottom: 16, paddingLeft: 20, justifyContent: 'space-between' },
+  lg: { paddingTop: space[4.5], paddingRight: space[3.5], paddingBottom: space[4], paddingLeft: space[5], justifyContent: 'space-between' },
   line: {
     position: 'absolute',
     left: '20%',
@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
     borderWidth: 10,
     borderColor: ui.coverRing,
   },
-  lgTitle: { gap: 6 },
-  lgTitleText: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 19, color: colors.onDark },
-  lgSubtitle: { fontFamily: fonts.regular, fontSize: 10, lineHeight: 13, color: colors.onDark, opacity: 0.85 },
-  lgAuthors: { fontFamily: fonts.regular, fontSize: 9, letterSpacing: 0.36, color: colors.onDark, opacity: 0.8 },
+  lgTitle: { gap: space[1.5] },
+  lgTitleText: { ...typography.coverTitle, color: colors.onDark },
+  lgSubtitle: { ...typography.coverSubtitle, color: colors.onDark, opacity: 0.85 },
+  lgAuthors: { ...typography.coverAuthors, color: colors.onDark, opacity: 0.8 },
 });

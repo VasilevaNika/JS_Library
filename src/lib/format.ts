@@ -75,3 +75,18 @@ export function plural(n: number, forms: [string, string, string]): string {
   if (b === 1) return forms[0];
   return forms[2];
 }
+
+/** «Алгоритмы. Построение и анализ» → надписи обложки «Алгоритмы» / «Построение и анализ». */
+export function splitBookTitle(title: string): [string, string | undefined] {
+  const i = title.indexOf('. ');
+  return i > 0 ? [title.slice(0, i), title.slice(i + 2)] : [title, undefined];
+}
+
+/** «Т. Кормен, Ч. Лейзерсон» → «Кормен · Лейзерсон» — авторы на большой обложке. */
+export function coverAuthors(full: string): string {
+  return full
+    .split(',')
+    .map((p) => p.trim().split(/\s+/).pop() ?? '')
+    .filter(Boolean)
+    .join(' · ');
+}

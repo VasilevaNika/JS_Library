@@ -12,6 +12,7 @@ import {
   EmptyState,
   Glass,
   Header,
+  LoadError,
   ReturnSheet,
   ScreenBackground,
   ShelfIllustration,
@@ -189,12 +190,7 @@ export default function MyBookingsScreen() {
     );
   } else if (q.status === 'error' && !data) {
     body = (
-      <EmptyState
-        visual={<StatusIcon icon="refresh" tone="busy" />}
-        title="Не удалось загрузить брони"
-        text="Проверьте подключение и попробуйте ещё раз."
-        actions={<Button label="Повторить" variant="secondary" block onPress={() => void q.reload({ showLoading: true })} />}
-      />
+      <LoadError title="Не удалось загрузить брони" onRetry={() => void q.reload({ showLoading: true })} />
     );
   } else if (loading || !mine) {
     body = (

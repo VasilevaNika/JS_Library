@@ -14,10 +14,10 @@ import {
   Header,
   Icon,
   InfoList,
+  LoadingBlock,
   QRCard,
   ReturnSheet,
   ScreenBackground,
-  Spinner,
   StatusIcon,
 } from '@/components';
 import { cancelBooking, getBooking, getSettings, markReturned, type BookingWithBookAndUser } from '@/db';
@@ -70,9 +70,7 @@ export default function BookingScreen() {
           <View style={styles.header}>{header}</View>
           <View style={styles.main}>
             {q.status === 'loading' ? (
-              <View style={styles.loading} accessibilityLabel="Загрузка">
-                <Spinner />
-              </View>
+              <LoadingBlock />
             ) : (
               <EmptyState
                 visual={<StatusIcon icon="refresh" tone="busy" />}
@@ -273,7 +271,6 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1 },
   header: { padding: space[4] },
   main: { flex: 1, gap: space[4], paddingHorizontal: space[4], paddingBottom: space[6] },
-  loading: { paddingTop: space[8], alignItems: 'center' },
   actions: { marginTop: 'auto', gap: space[2] },
   card: {
     alignItems: 'center',

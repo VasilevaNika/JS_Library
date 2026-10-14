@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { plural } from '@/lib/format';
-import { colors, fonts, radius, space, status, typography, type CoverColor } from '@/theme/tokens';
+import { colors, radius, space, status, typography, type CoverColor } from '@/theme/tokens';
 
 import { AppText, TwoToneTitle } from './AppText';
 import { BookCover } from './BookCover';
@@ -94,9 +94,9 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   flex12: { flex: 1.2 },
   head: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  book: { flexDirection: 'row', alignItems: 'center', gap: space[3], padding: 10, borderRadius: radius.lg, backgroundColor: colors.surface },
-  bookText: { flex: 1, gap: 2 },
-  bookTitle: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 18, color: colors.ink },
+  book: { flexDirection: 'row', alignItems: 'center', gap: space[3], padding: space[2.5], borderRadius: radius.lg, backgroundColor: colors.surface },
+  bookText: { flex: 1, gap: space[0.5] },
+  bookTitle: { ...typography.titleSm, color: colors.ink },
   row: { flexDirection: 'row', gap: space[2] },
   coverWrap: { alignItems: 'center', paddingVertical: space[2] },
   overdue: { ...typography.label, color: status.overdue.fg, textAlign: 'center' },

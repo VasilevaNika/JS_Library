@@ -11,9 +11,10 @@ import {
   Dialog,
   Icon,
   IconButton,
+  LoadError,
+  LoadingBlock,
   Notice,
   Panel,
-  Spinner,
   Stepper,
   TextField,
   TwoToneTitle,
@@ -30,14 +31,8 @@ import {
 } from '@/db';
 import { useQuery } from '@/hooks/useQuery';
 import { pickCoverImage } from '@/lib/files';
-import { plural } from '@/lib/format';
+import { plural, splitBookTitle } from '@/lib/format';
 import { colors, space, ui } from '@/theme/tokens';
-
-/** «Алгоритмы. Построение и анализ» → «Алгоритмы» / «Построение и анализ» — надписи на обложке. */
-function splitTitle(title: string): [string, string | undefined] {
-  const i = title.indexOf('. ');
-  return i > 0 ? [title.slice(0, i), title.slice(i + 2)] : [title, undefined];
-}
 
 export default function BookFormScreen() {
   const router = useRouter();
@@ -52,10 +47,16 @@ export default function BookFormScreen() {
 
   const back = () => router.dismissTo('/moderator/catalog');
 
-  if (bookId !== null && existing.status === 'loading') {
+  if (bookId !== null && existing.status === 'loading') return <LoadingBlock />;
+  // Книгу удалили или ссылка устарела — не открываем форму как «новую».
+  if (bookId !== null && (existing.status === 'error' || !existing.data)) {
     return (
-      <View style={styles.loading}>
-        <Spinner />
+      <View style={styles.missing}>
+        <LoadError
+          container="card"
+          title={existing.status === 'error' ? undefined : 'Книга не найдена'}
+          onRetry={() => void existing.reload({ showLoading: true })}
+        />
       </View>
     );
   }
@@ -114,7 +115,7 @@ function BookForm({
   };
 
   const blocked = !!usage && usage.reserved + usage.issued > 0;
-  const [coverTitle, coverSubtitle] = splitTitle(book?.title ?? '');
+  const [coverTitle, coverSubtitle] = splitBookTitle(book?.title ?? '');
 
   return (
     <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
@@ -272,7 +273,7 @@ function BookForm({
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  missing: { paddingHorizontal: space[6] },
   content: { flexGrow: 1, paddingHorizontal: space[6], paddingBottom: space[6] },
   panel: { alignSelf: 'center', width: '100%', maxWidth: 960, gap: space[6], padding: space[6] },
   head: { flexDirection: 'row', alignItems: 'center', gap: space[3] },

@@ -11,14 +11,13 @@ import {
   Bone,
   BookRow,
   Button,
-  EmptyState,
   Glass,
   Header,
+  LoadError,
   ScreenBackground,
   SearchField,
   ShelfIllustration,
   SkeletonRow,
-  StatusIcon,
   TwoToneTitle,
 } from '@/components';
 import { getDevFlag, searchBooks, similarBooks, type BookWithAvailability } from '@/db';
@@ -109,12 +108,7 @@ export default function ResultsScreen() {
           <SearchField value={query} onChangeText={setQuery} onSubmit={submit} onClear={toHome} />
 
           {result.status === 'error' && !data ? (
-            <EmptyState
-              visual={<StatusIcon icon="refresh" tone="busy" />}
-              title="Не удалось загрузить данные"
-              text="Проверьте подключение и попробуйте ещё раз."
-              actions={<Button label="Повторить" variant="secondary" block onPress={() => void result.reload({ showLoading: true })} />}
-            />
+            <LoadError onRetry={() => void result.reload({ showLoading: true })} />
           ) : result.status === 'loading' ? (
             <Glass style={styles.section}>
               <Bone width="36%" height={14} style={styles.indent} />

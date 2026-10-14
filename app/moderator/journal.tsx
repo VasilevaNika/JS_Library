@@ -10,18 +10,19 @@ import {
   BookCover,
   Button,
   Cell,
+  type Column,
   DataTable,
   EmptyState,
   FilterChip,
   IconButton,
+  LoadError,
+  LoadingBlock,
   Panel,
-  Spinner,
   StatusChip,
   StatusIcon,
   StatusTimeline,
   ToolbarSearch,
   TwoToneTitle,
-  type Column,
 } from '@/components';
 import {
   countBooks,
@@ -156,19 +157,11 @@ export default function JournalScreen() {
   let body;
   if (q.status === 'loading') {
     body = (
-      <View style={styles.loading} accessibilityLabel="Загрузка">
-        <Spinner />
-      </View>
+      <LoadingBlock />
     );
   } else if (q.status === 'error' && !q.data) {
     body = (
-      <EmptyState
-        container="card"
-        visual={<StatusIcon icon="refresh" tone="busy" />}
-        title="Не удалось загрузить журнал"
-        text="Проверьте подключение и попробуйте ещё раз."
-        actions={<Button label="Повторить" variant="secondary" onPress={() => void q.reload({ showLoading: true })} style={styles.center} />}
-      />
+      <LoadError container="card" title="Не удалось загрузить журнал" onRetry={() => void q.reload({ showLoading: true })} />
     );
   } else if (q.data && q.data.books === 0) {
     body = (
@@ -379,15 +372,14 @@ const styles = StyleSheet.create({
   main: { flexGrow: 999, flexShrink: 1, flexBasis: 640, minWidth: 0, borderRadius: radius.sheet },
   aside: { flexGrow: 1, flexShrink: 1, flexBasis: 340, maxWidth: 380 },
   filters: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
-  loading: { paddingVertical: space[8], alignItems: 'center' },
-  student: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  student: { flexDirection: 'row', alignItems: 'center', gap: space[2.5] },
   nowrap: { flexShrink: 0 },
-  group: { fontFamily: fonts.regular, fontSize: 12, color: colors.inkMuted },
+  group: { ...typography.microRegular, color: colors.inkMuted },
   selectedRow: { backgroundColor: ui.selectedRowBg },
   footer: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: space[2] },
   asideHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   indent: { marginLeft: space[1] },
-  recordCard: { gap: space[3], paddingVertical: 14, paddingHorizontal: space[4], borderRadius: radius.xl, backgroundColor: colors.surface },
+  recordCard: { gap: space[3], paddingVertical: space[3.5], paddingHorizontal: space[4], borderRadius: radius.xl, backgroundColor: colors.surface },
   recordRow: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
   recordBook: { paddingTop: space[3], borderTopWidth: 1, borderTopColor: colors.surfaceSunken },
   recordName: { ...typography.body, lineHeight: 20, fontFamily: fonts.semibold, color: colors.ink },

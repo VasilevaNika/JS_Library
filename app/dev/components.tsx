@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
   wide: { width: 1100 },
   indent: { marginLeft: space[2] },
   counters: { flexDirection: 'row', gap: space[2] },
-  cellRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  cellRow: { flexDirection: 'row', alignItems: 'center', gap: space[2.5] },
   dropBox: { height: 300 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
 });

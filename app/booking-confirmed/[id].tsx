@@ -7,15 +7,14 @@ import {
   AppText,
   BookCover,
   Button,
-  EmptyState,
   Glass,
   Header,
+  LoadError,
+  LoadingBlock,
   Notice,
   QRCard,
   ScreenBackground,
-  Spinner,
   StatusChip,
-  StatusIcon,
   TwoToneTitle,
 } from '@/components';
 import { getBooking, getSettings, isWeekend, previousWorkday } from '@/db';
@@ -46,16 +45,9 @@ export default function BookingConfirmedScreen() {
           </View>
           <View style={styles.main}>
             {q.status === 'loading' ? (
-              <View style={styles.loading} accessibilityLabel="Загрузка">
-                <Spinner />
-              </View>
+              <LoadingBlock />
             ) : (
-              <EmptyState
-                visual={<StatusIcon icon="refresh" tone="busy" />}
-                title="Не удалось загрузить данные"
-                text="Проверьте подключение и попробуйте ещё раз."
-                actions={<Button label="Повторить" variant="secondary" block onPress={() => void q.reload({ showLoading: true })} />}
-              />
+              <LoadError onRetry={() => void q.reload({ showLoading: true })} />
             )}
           </View>
         </SafeAreaView>
@@ -153,11 +145,10 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1 },
   header: { padding: space[4] },
   main: { flex: 1, gap: space[3], paddingHorizontal: space[4], paddingBottom: space[4] },
-  loading: { paddingTop: space[8], alignItems: 'center' },
   title: { marginVertical: space[1], marginHorizontal: space[2] },
   details: { gap: space[1], paddingTop: space[3], paddingHorizontal: space[4], paddingBottom: space[4] },
   book: { flexDirection: 'row', alignItems: 'center', gap: space[3], paddingBottom: space[2] },
-  bookBody: { flex: 1, minWidth: 0, gap: 2 },
+  bookBody: { flex: 1, minWidth: 0, gap: space[0.5] },
   bookTitle: { ...typography.bodyStrong, color: colors.ink },
   chip: { marginTop: space[1] },
   line: {

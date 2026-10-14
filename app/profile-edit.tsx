@@ -170,6 +170,6 @@ const styles = StyleSheet.create({
     paddingRight: space[1],
     paddingLeft: space[2],
   },
-  passwordText: { gap: 2 },
+  passwordText: { gap: space[0.5] },
   footer: { flexDirection: 'row', gap: space[2], paddingTop: space[4], paddingHorizontal: space[4] },
 });

@@ -118,11 +118,17 @@ export const covers: Record<CoverColor, { from: string; to: string }> = {
 
 export const coverGradientAngle = 160;
 
+/** Шкала отступов дизайн-системы (4–32) и промежуточные значения из экспорта экранов (2, 6, 10, 14, 18). */
 export const space = {
+  0.5: 2,
   1: 4,
+  1.5: 6,
   2: 8,
+  2.5: 10,
   3: 12,
+  3.5: 14,
   4: 16,
+  4.5: 18,
   5: 20,
   6: 24,
   8: 32,
@@ -132,7 +138,9 @@ export const radius = {
   coverSpine: 3,
   cover: 7,
   sm: 8,
+  corner: 10,
   md: 12,
+  control: 16,
   icon: 18,
   lg: 20,
   xl: 24,
@@ -214,7 +222,31 @@ export const typography = {
   micro: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16 },
   button: { fontFamily: fonts.semibold, fontSize: 16, lineHeight: 20 },
   buttonSm: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 20 },
+  buttonXs: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 18 },
+
+  // Специальные размеры из экспорта экранов (вне основной шкалы).
+  input: { fontFamily: fonts.regular, fontSize: 17, lineHeight: 22 },
+  inputMd: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 20 },
+  inputSm: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20 },
+  stat: { fontFamily: fonts.semibold, fontSize: 20, lineHeight: 26 },
+  counter: { fontFamily: fonts.semibold, fontSize: 20, lineHeight: 24 },
+  code: { fontFamily: fonts.semibold, fontSize: 22, lineHeight: 28, letterSpacing: 1.76 },
+  codeLg: { fontFamily: fonts.semibold, fontSize: 28, lineHeight: 34, letterSpacing: 2.8 },
+  table: { fontFamily: fonts.regular, fontSize: 13, lineHeight: 17 },
+  tableMedium: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 17 },
+  tableStrong: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 17 },
+  titleSm: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 18 },
+  overline: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, letterSpacing: 0.24 },
+  microRegular: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 16 },
+  badge: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 18 },
+  stepperSign: { fontFamily: fonts.regular, fontSize: 18, lineHeight: 22 },
+  coverTitle: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 19 },
+  coverSubtitle: { fontFamily: fonts.regular, fontSize: 10, lineHeight: 13 },
+  coverAuthors: { fontFamily: fonts.regular, fontSize: 9, lineHeight: 12, letterSpacing: 0.36 },
 } satisfies Record<string, TextStyleToken>;
+
+/** Размер инициалов в аватаре по диаметру круга. */
+export const avatarFont = { 28: 11, 30: 11, 40: 13, 48: 16, 64: 22, 80: 28 } as const;
 
 /** Фон экрана: градиент 170° и цветные ауры сверху. */
 export const gradients = {

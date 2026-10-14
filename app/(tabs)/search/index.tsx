@@ -6,21 +6,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   AppText,
+  type BannerTone,
   Bone,
   BookingBanner,
   BookTile,
-  Button,
-  EmptyState,
   Glass,
   Header,
+  LoadError,
   ScreenBackground,
   SearchField,
   ShelfIllustration,
-  StatusIcon,
   TextLink,
   TopicChip,
   TwoToneTitle,
-  type BannerTone,
 } from '@/components';
 import {
   countBooks,
@@ -117,12 +115,7 @@ export default function HomeScreen() {
           <SearchField value={query} onChangeText={setQuery} onSubmit={() => search(query)} />
 
           {home.status === 'error' && !data ? (
-            <EmptyState
-              visual={<StatusIcon icon="refresh" tone="busy" />}
-              title="Не удалось загрузить данные"
-              text="Проверьте подключение и попробуйте ещё раз."
-              actions={<Button label="Повторить" variant="secondary" block onPress={() => void home.reload({ showLoading: true })} />}
-            />
+            <LoadError onRetry={() => void home.reload({ showLoading: true })} />
           ) : loading ? (
             <HomeSkeleton />
           ) : catalogEmpty ? (
@@ -222,7 +215,7 @@ const styles = StyleSheet.create({
   titleBlock: { gap: space[2], marginTop: space[2], marginHorizontal: space[2] },
   topics: { marginHorizontal: -space[4] },
   topicsContent: { paddingHorizontal: space[4], gap: space[2] },
-  bannerBlock: { gap: 6 },
+  bannerBlock: { gap: space[1.5] },
   more: { alignSelf: 'flex-start', paddingVertical: space[1], paddingHorizontal: space[3] },
   recent: { gap: space[3], paddingTop: space[4], paddingHorizontal: space[3], paddingBottom: space[3] },
   recentTitle: { paddingHorizontal: space[2] },
@@ -234,7 +227,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: space[3],
-    padding: 10,
+    padding: space[2.5],
     borderRadius: radius.lg,
     backgroundColor: ui.skeletonGlass,
   },

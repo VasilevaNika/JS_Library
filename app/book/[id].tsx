@@ -14,6 +14,7 @@ import {
   EmptyState,
   Header,
   InfoList,
+  LoadError,
   Notice,
   QueueSheet,
   ReturnSheet,
@@ -36,7 +37,7 @@ import {
 } from '@/db';
 import { useQuery } from '@/hooks/useQuery';
 import { useSession } from '@/hooks/useSession';
-import { dayMonth, dayMonthTime } from '@/lib/format';
+import { coverAuthors, dayMonth, dayMonthTime, splitBookTitle } from '@/lib/format';
 import { colors, radius, shadows, space, type StatusTone } from '@/theme/tokens';
 
 type ScreenState = BookCardState | 'race' | 'creating' | 'error';
@@ -54,21 +55,6 @@ const CHIP: Record<ScreenState, { label: string; tone: StatusTone }> = {
   overdueOther: { label: 'Выдана', tone: 'busy' },
   withMe: { label: 'Выдана вам', tone: 'busy' },
 };
-
-/** «Алгоритмы. Построение и анализ» → обложка «Алгоритмы» / «Построение и анализ». */
-function splitTitle(title: string): [string, string | undefined] {
-  const i = title.indexOf('. ');
-  return i > 0 ? [title.slice(0, i), title.slice(i + 2)] : [title, undefined];
-}
-
-/** «Т. Кормен, Ч. Лейзерсон» → «Кормен · Лейзерсон». */
-function coverAuthors(full: string): string {
-  return full
-    .split(',')
-    .map((p) => p.trim().split(/\s+/).pop() ?? '')
-    .filter(Boolean)
-    .join(' · ');
-}
 
 export default function BookScreen() {
   const router = useRouter();
@@ -177,12 +163,7 @@ export default function BookScreen() {
             <Header variant="book" backLabel="Назад к результатам" onBack={back} />
           </View>
           <View style={styles.missing}>
-            <EmptyState
-              visual={<StatusIcon icon="refresh" tone="busy" />}
-              title="Не удалось загрузить данные"
-              text="Проверьте подключение и попробуйте ещё раз."
-              actions={<Button label="Повторить" variant="secondary" block onPress={() => void card.reload({ showLoading: true })} />}
-            />
+            <LoadError onRetry={() => void card.reload({ showLoading: true })} />
           </View>
         </SafeAreaView>
       </ScreenBackground>
@@ -191,7 +172,7 @@ export default function BookScreen() {
 
   const data = loaded.data;
   const mine = data.myBooking;
-  const [coverTitle, coverSubtitle] = splitTitle(book.title);
+  const [coverTitle, coverSubtitle] = splitBookTitle(book.title);
   const free = book.availability.onShelf > 0 && ['available', 'creating', 'limit', 'mine', 'error'].includes(state);
 
   let notice: { text: string; tone: StatusTone; link?: boolean } | null = null;

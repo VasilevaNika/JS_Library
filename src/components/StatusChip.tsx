@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { colors, radius, size as sizes, status, typography, ui, type StatusTone } from '@/theme/tokens';
+import { colors, radius, size as sizes, space, status, type StatusTone, typography, ui } from '@/theme/tokens';
 
 import { AppText } from './AppText';
 
@@ -37,14 +37,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
+    gap: space[1.5],
+    paddingHorizontal: space[3],
     borderRadius: radius.pill,
   },
   lg: {
-    gap: 8,
-    paddingLeft: 12,
-    paddingRight: 14,
+    gap: space[2],
+    paddingLeft: space[3],
+    paddingRight: space[3.5],
     backgroundColor: ui.chipLgBg,
     borderWidth: 1,
     borderColor: colors.glassEdge,

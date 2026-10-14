@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     gap: space[3],
     height: sizes.controlLg,
-    paddingLeft: 6,
+    paddingLeft: space[1.5],
     paddingRight: space[5],
     borderRadius: radius.pill,
     backgroundColor: colors.glass,
@@ -298,14 +298,14 @@ const styles = StyleSheet.create({
   },
   badgeDesktop: { height: sizes.iconButton },
   badgeText: { ...typography.body, lineHeight: 20, fontFamily: fonts.medium, color: colors.ink },
-  badgeTextDesktop: { fontSize: 14 },
+  badgeTextDesktop: { fontSize: typography.label.fontSize },
   success: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: space[3],
     height: sizes.iconButton,
-    paddingLeft: 6,
+    paddingLeft: space[1.5],
     paddingRight: space[4],
     borderRadius: radius.pill,
     backgroundColor: status.available.bg,
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabBadgeText: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 18, color: colors.onDark },
+  tabBadgeText: { ...typography.badge, color: colors.onDark },
 
   menuItem: {
     flexDirection: 'row',
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   menuItemTall: { height: undefined, minHeight: 60, paddingVertical: space[2] },
   menuItemCurrent: { backgroundColor: colors.surfaceSunken },
   menuText: { ...typography.body, lineHeight: 20, fontFamily: fonts.medium, color: colors.ink },
-  menuGroup: { padding: 6, borderRadius: radius.xl, backgroundColor: colors.surface },
+  menuGroup: { padding: space[1.5], borderRadius: radius.xl, backgroundColor: colors.surface },
 
   modBar: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: space[3] },
   modLeft: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space[3] },
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     borderColor: colors.glassEdge,
     boxShadow: shadows.glass,
   },
-  modTab: { height: 42, justifyContent: 'center', paddingHorizontal: 18, borderRadius: radius.pill },
+  modTab: { height: 42, justifyContent: 'center', paddingHorizontal: space[4.5], borderRadius: radius.pill },
   modTabOn: { backgroundColor: colors.surface, boxShadow: shadows.tabActive },
   modRight: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
   datePill: {
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.glassEdge,
   },
-  modUser: { height: sizes.iconButton, gap: 10, paddingRight: 18 },
+  modUser: { height: sizes.iconButton, gap: space[2.5], paddingRight: space[4.5] },
   modAvatar: {
     width: 40,
     height: 40,
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: ui.disabledBg,
   },
-  modAvatarText: { fontFamily: fonts.semibold, fontSize: 12, color: status.neutral.fg },
+  modAvatarText: { ...typography.overline, letterSpacing: 0, color: status.neutral.fg },
 
   steps: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
   step: {
@@ -410,11 +410,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: space[2],
     height: sizes.chipLg,
-    paddingLeft: 6,
-    paddingRight: 14,
+    paddingLeft: space[1.5],
+    paddingRight: space[3.5],
     borderRadius: radius.pill,
   },
   stepNum: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  stepNumText: { fontFamily: fonts.semibold, fontSize: 12 },
+  stepNumText: { ...typography.overline, letterSpacing: 0 },
   stepText: { ...typography.caption, fontFamily: fonts.medium },
 });

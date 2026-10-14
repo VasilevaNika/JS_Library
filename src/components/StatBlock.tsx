@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { backgrounds, colors, fonts, radius, size, space, status } from '@/theme/tokens';
+import { backgrounds, colors, fonts, radius, size, space, status, typography } from '@/theme/tokens';
 
 import { AppText } from './AppText';
 
@@ -64,5 +64,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line,
   },
-  valueText: { fontFamily: fonts.semibold, fontSize: 20, lineHeight: 26 },
+  valueText: typography.stat,
 });
