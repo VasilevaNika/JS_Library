@@ -166,7 +166,10 @@ export type InfoItem = {
   note?: string;
   icon?: 'user' | 'calendar' | 'barcode';
   onPress?: () => void;
+  /** Шеврон у значения-ссылки, даже если ссылка пока неактивна. */
+  chevron?: boolean;
   tabular?: boolean;
+  minHeight?: number;
 };
 
 /** Пары «подпись — значение» в белом блоке. */
@@ -187,11 +190,11 @@ export function InfoList({ items, compact }: { items: InfoItem[]; compact?: bool
                 {it.value}
                 {it.note ? <Text style={{ color: colors.inkMuted }}> {it.note}</Text> : null}
               </AppText>
-              {it.onPress && <Icon name="chevron" size={iconSize.table} color={colors.ink} />}
+              {(it.onPress || it.chevron) && <Icon name="chevron" size={iconSize.table} color={colors.ink} />}
             </View>
           </>
         );
-        const rowStyle = [styles.infoRow, i === items.length - 1 && styles.infoLast];
+        const rowStyle = [styles.infoRow, it.minHeight ? { minHeight: it.minHeight } : null, i === items.length - 1 && styles.infoLast];
         return it.onPress ? (
           <Pressable key={it.label} onPress={it.onPress} accessibilityRole="button" style={rowStyle}>
             {row}
