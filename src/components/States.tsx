@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   },
   icon: { alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
 
-  shelf: { borderRadius: radius.lg, overflow: 'hidden', justifyContent: 'flex-end', backgroundColor: colors.surface },
+  shelf: { alignSelf: 'stretch', borderRadius: radius.lg, overflow: 'hidden', justifyContent: 'flex-end', backgroundColor: colors.surface },
   shelfSmall: { height: 156, paddingHorizontal: space[6], paddingBottom: space[5], experimental_backgroundImage: backgrounds.shelfCard },
   shelfBig: { height: 220, paddingHorizontal: 48, paddingBottom: 28, experimental_backgroundImage: backgrounds.shelfNoBookings },
   shelfBooks: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1], paddingHorizontal: space[2] },
