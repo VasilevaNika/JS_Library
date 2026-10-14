@@ -5,6 +5,7 @@ import type { StatusTone } from '@/theme/tokens';
 
 import type { BookCard, CreateBookingResult } from './bookings';
 import type { BookInputError } from './books';
+import type { ImportCheck } from './catalogImport';
 import type { Book, BookingWithBook, LibrarySettings } from './types';
 import { MIN_PASSWORD_LENGTH, type ProfileError, type RegisterError } from './users';
 
@@ -21,6 +22,14 @@ export const TEXT = {
   overdueOther:
     'Срок возврата прошёл, книгу ещё не вернули. Встаньте в очередь — мы напишем, как только она появится.',
 } as const;
+
+/** Ошибка строки импорта — подпись чипа в таблице проверки. */
+export const IMPORT_ERROR_LABEL: Record<Extract<ImportCheck, { kind: 'error' }>['error'], string> = {
+  noTitle: 'Нет названия',
+  noAuthor: 'Нет автора',
+  badIsbn: 'ISBN неверного формата',
+  badCopies: 'Неверное количество',
+};
 
 export function bookingLimitText(max: number): string {
   return `У вас уже ${max} активные брони. Заберите или отмените одну из них.`;

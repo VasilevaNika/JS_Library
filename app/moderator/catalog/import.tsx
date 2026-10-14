@@ -25,7 +25,7 @@ import {
   TwoToneTitle,
   type Column,
 } from '@/components';
-import { checkImportRows, commitImport, type CheckedRow, type DuplicateMode, type ImportResult, type ImportSummary } from '@/db';
+import { checkImportRows, commitImport, IMPORT_ERROR_LABEL, type CheckedRow, type DuplicateMode, type ImportResult, type ImportSummary } from '@/db';
 import { plural } from '@/lib/format';
 import {
   autoMap,
@@ -45,15 +45,8 @@ type Filter = 'all' | 'new' | 'exists' | 'error';
 
 const STEP_INDEX: Record<Step, number> = { upload: 0, mapping: 1, preview: 2, result: 3, error: 2 };
 
-const ERROR_LABEL = {
-  noTitle: 'Нет названия',
-  noAuthor: 'Нет автора',
-  badIsbn: 'ISBN неверного формата',
-  badCopies: 'Неверное количество',
-} as const;
-
 function checkChip(r: CheckedRow): { label: string; tone: StatusTone } {
-  if (r.check.kind === 'error') return { label: ERROR_LABEL[r.check.error], tone: 'overdue' };
+  if (r.check.kind === 'error') return { label: IMPORT_ERROR_LABEL[r.check.error], tone: 'overdue' };
   if (r.check.kind === 'exists') return { label: 'Есть в каталоге · +экз.', tone: 'neutral' };
   return { label: 'Будет добавлена', tone: 'available' };
 }
