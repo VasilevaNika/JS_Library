@@ -8,7 +8,8 @@
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspect": "npm run build && npx @modelcontextprotocol/inspector -e LIBRARY_USER_EMAIL=anna.smirnova@mail.ru -e LIBRARY_ROLE=student node dist/index.js",
+    "inspect:moderator": "npm run build && npx @modelcontextprotocol/inspector -e LIBRARY_USER_EMAIL=moderator@campus.test -e LIBRARY_ROLE=moderator node dist/index.js"
   },
   "engines": {
     "node": ">=22.5"
