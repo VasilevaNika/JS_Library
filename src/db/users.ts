@@ -39,7 +39,8 @@ export async function isEmailTaken(email: string, exceptUserId?: number): Promis
 
 export type LoginResult = { ok: true; user: User } | { ok: false; error: 'invalidCredentials' };
 
-export async function login(email: string, password: string): Promise<LoginResult> {
+/** Проверка почты и пароля без открытия сессии — её вызывает и общий сервер. */
+export async function authenticate(email: string, password: string): Promise<LoginResult> {
   const db = await getDb();
   const row = await db.getFirstAsync<UserRow & { password_hash: string; password_salt: string }>(
     `SELECT ${USER_COLUMNS}, password_hash, password_salt FROM users WHERE email = ?`,
@@ -48,8 +49,19 @@ export async function login(email: string, password: string): Promise<LoginResul
   if (!row || (await hashPassword(password, row.password_salt)) !== row.password_hash) {
     return { ok: false, error: 'invalidCredentials' };
   }
-  await setSessionUserId(row.id);
   return { ok: true, user: toUser(row) };
+}
+
+export async function login(email: string, password: string): Promise<LoginResult> {
+  const res = await authenticate(email, password);
+  if (res.ok) await setSessionUserId(res.user.id);
+  return res;
+}
+
+export async function getUserByEmail(email: string): Promise<User | null> {
+  const db = await getDb();
+  const row = await db.getFirstAsync<UserRow>(`SELECT ${USER_COLUMNS} FROM users WHERE email = ?`, email.trim());
+  return row ? toUser(row) : null;
 }
 
 export async function logout(): Promise<void> {
@@ -71,7 +83,8 @@ export function validateRegistration(input: RegisterInput): RegisterError[] {
 
 const AVATAR_COLORS: CoverColor[] = ['teal', 'violet', 'terracotta', 'sky', 'green', 'rose', 'ochre', 'graphite'];
 
-export async function register(input: RegisterInput): Promise<RegisterResult> {
+/** Создание аккаунта читателя без открытия сессии — её вызывает и общий сервер, и MCP. */
+export async function registerUser(input: RegisterInput): Promise<RegisterResult> {
   const errors = validateRegistration(input);
   if (errors.length === 0 && (await isEmailTaken(input.email))) errors.push('emailTaken');
   if (errors.length > 0) return { ok: false, errors };
@@ -95,11 +108,15 @@ export async function register(input: RegisterInput): Promise<RegisterResult> {
     now(),
     color,
   );
-  const id = res.lastInsertRowId;
-  await setSessionUserId(id);
-  const user = await getUser(id);
+  const user = await getUser(res.lastInsertRowId);
   if (!user) throw new Error('Пользователь не создан');
   return { ok: true, user };
+}
+
+export async function register(input: RegisterInput): Promise<RegisterResult> {
+  const res = await registerUser(input);
+  if (res.ok) await setSessionUserId(res.user.id);
+  return res;
 }
 
 /** Сброс пароля: письма не отправляются (spec.md, Q2) — только проверяем формат адреса. */

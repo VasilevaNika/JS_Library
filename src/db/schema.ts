@@ -90,4 +90,16 @@ export const MIGRATIONS: readonly string[] = [
     value TEXT
   );
   `,
+  // 2 — журнал действий MCP-сервера
+  `
+  CREATE TABLE mcp_audit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    at INTEGER NOT NULL,
+    user_email TEXT NOT NULL,
+    tool TEXT NOT NULL,
+    params TEXT NOT NULL,
+    ok INTEGER NOT NULL,
+    result TEXT NOT NULL
+  );
+  `,
 ];

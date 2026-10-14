@@ -15,15 +15,16 @@ import {
   ScreenBackground,
   TextField,
 } from '@/components';
-import { initials, setAvatar, updateProfile, type ProfileError } from '@/db';
+import {
+  initials,
+  type ProfileError,
+  profileErrorText,
+  setAvatar,
+  updateProfile,
+} from '@/db';
 import { useSession } from '@/hooks/useSession';
 import { dayMonth } from '@/lib/format';
 import { colors, fonts, space, status, typography } from '@/theme/tokens';
-
-const ERROR_TEXT: Record<ProfileError, string> = {
-  emailInvalid: 'Проверьте адрес — в нём нет @',
-  emailTaken: 'Этот адрес уже зарегистрирован.',
-};
 
 export default function ProfileEditScreen() {
   const router = useRouter();
@@ -105,7 +106,7 @@ export default function ProfileEditScreen() {
                   }}
                   keyboardType="email-address"
                   autoComplete="email"
-                  error={error ? ERROR_TEXT[error] : undefined}
+                  error={error ? profileErrorText(error) : undefined}
                 />
                 <TextField
                   label="Telegram"

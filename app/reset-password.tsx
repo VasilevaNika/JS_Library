@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AuthLayout, Button, StatusIcon, TextField } from '@/components';
-import { requestPasswordReset } from '@/db';
+import { requestPasswordReset, TEXT } from '@/db';
 import { colors, fonts, space, typography } from '@/theme/tokens';
 
 const RESEND_SECONDS = 45;
@@ -87,7 +87,7 @@ export default function ResetPasswordScreen() {
           keyboardType="email-address"
           autoComplete="email"
           onSubmitEditing={send}
-          error={invalid ? 'Проверьте адрес — в нём нет @' : undefined}
+          error={invalid ? TEXT.emailInvalid : undefined}
         />
       }
       footer={

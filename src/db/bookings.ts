@@ -471,3 +471,10 @@ export async function getStatusHistory(bookingId: number): Promise<StatusEvent[]
   );
   return rows.map(toStatusEvent);
 }
+
+/** Бронь по коду из QR («7KQ4MX», регистр и пробелы не важны). */
+export async function getBookingByCode(code: string): Promise<BookingWithBookAndUser | null> {
+  await refreshStatuses();
+  const rows = await queryJoined('WHERE k.code = ?', code.replace(/\s+/g, '').toUpperCase());
+  return rows[0] ?? null;
+}

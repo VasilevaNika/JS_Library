@@ -26,6 +26,8 @@ import {
   TwoToneTitle,
 } from '@/components';
 import {
+  type BookCardState,
+  bookStateNotice,
   createBooking,
   getBookCard,
   getDevFlag,
@@ -33,11 +35,10 @@ import {
   joinQueue,
   leaveQueue,
   markReturned,
-  type BookCardState,
 } from '@/db';
 import { useQuery } from '@/hooks/useQuery';
 import { useSession } from '@/hooks/useSession';
-import { coverAuthors, dayMonth, dayMonthTime, splitBookTitle } from '@/lib/format';
+import { coverAuthors, dayMonth, splitBookTitle } from '@/lib/format';
 import { colors, radius, shadows, space, type StatusTone } from '@/theme/tokens';
 
 type ScreenState = BookCardState | 'race' | 'creating' | 'error';
@@ -175,49 +176,7 @@ export default function BookScreen() {
   const [coverTitle, coverSubtitle] = splitBookTitle(book.title);
   const free = book.availability.onShelf > 0 && ['available', 'creating', 'limit', 'mine', 'error'].includes(state);
 
-  let notice: { text: string; tone: StatusTone; link?: boolean } | null = null;
-  switch (state) {
-    case 'mine':
-      if (mine?.pickupUntil) notice = { text: `Ваша бронь. Книга ждёт вас до ${dayMonthTime(mine.pickupUntil)}`, tone: 'available' };
-      break;
-    case 'limit':
-      notice = {
-        text: `У вас уже ${settings.maxActiveBookings} активные брони. Заберите или отмените одну из них.`,
-        tone: 'neutral',
-        link: true,
-      };
-      break;
-    case 'race':
-      notice = { text: 'Книгу только что забронировали. Можно встать в очередь.', tone: 'busy' };
-      break;
-    case 'reserved':
-      notice = {
-        text: data.reservedUntil
-          ? `Книга забронирована. Если её не заберут, она освободится ${dayMonthTime(data.reservedUntil)}.`
-          : 'Книга забронирована.',
-        tone: 'neutral',
-      };
-      break;
-    case 'issued':
-      notice = { text: data.dueAt ? `Книга на руках. Вернут до ${dayMonth(data.dueAt)}.` : 'Книга на руках.', tone: 'neutral' };
-      break;
-    case 'overdueOther':
-      notice = {
-        text: 'Срок возврата прошёл, книгу ещё не вернули. Встаньте в очередь — мы напишем, как только она появится.',
-        tone: 'neutral',
-      };
-      break;
-    case 'inQueue':
-      notice = { text: `Вы в очереди: ${data.queuePosition}-й. Мы напишем, когда книга освободится.`, tone: 'available' };
-      break;
-    case 'withMe':
-      if (mine?.status === 'overdue' && mine.dueAt) {
-        notice = { text: `Срок возврата прошёл ${dayMonth(mine.dueAt)}.`, tone: 'overdue' };
-      } else if (mine?.dueAt) {
-        notice = { text: `Книга у вас. Вернуть до ${dayMonth(mine.dueAt)}.`, tone: 'busy' };
-      }
-      break;
-  }
+  const notice = bookStateNotice(data, settings, state === 'race');
 
   return (
     <ScreenBackground variant="book">
@@ -280,7 +239,7 @@ export default function BookScreen() {
                 <Notice
                   tone={notice.tone}
                   text={notice.text}
-                  link={notice.link ? { label: 'Открыть «Мои брони»', onPress: () => router.navigate('/bookings') } : undefined}
+                  link={notice.showBookingsLink ? { label: 'Открыть «Мои брони»', onPress: () => router.navigate('/bookings') } : undefined}
                 />
               )}
               {(state === 'available' || state === 'creating' || state === 'error') && (

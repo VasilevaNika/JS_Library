@@ -28,18 +28,20 @@ import {
   TwoToneTitle,
 } from '@/components';
 import {
+  type BookingWithBookAndUser,
   closeOnShelf,
   defaultDueDate,
+  expiredBookingText,
   getReconciliation,
   getSettings,
   initials,
   issueBookings,
+  type IssueLookup,
+  issueNotFoundText,
   issueWithoutBooking,
   lookupForIssue,
   markMissing,
   postponeCheck,
-  type BookingWithBookAndUser,
-  type IssueLookup,
 } from '@/db';
 import { useQuery } from '@/hooks/useQuery';
 import { useSession } from '@/hooks/useSession';
@@ -203,14 +205,14 @@ export default function IssueScreen() {
             <Notice
               tone="overdue"
               large
-              text={`Бронь с кодом ${lookup.query} не найдена. Проверьте код или найдите по имени студента.`}
+              text={issueNotFoundText(lookup.query)}
             />
           )}
           {lookup?.kind === 'expired' && (
             <Notice
               tone="neutral"
               large
-              text={`Бронь ${lookup.booking.code} истекла ${dayMonth(lookup.booking.expiredAt ?? lookup.booking.pickupUntil ?? 0)}. Книга «${lookup.booking.book.title}» сейчас ${lookup.bookAvailable ? 'в наличии' : 'не в наличии'}.`}
+              text={expiredBookingText(lookup.booking, lookup.bookAvailable)}
               action={
                 lookup.bookAvailable
                   ? { label: 'Выдать без брони', onPress: () => void issueExpired(), placement: 'below' }

@@ -21,17 +21,20 @@ import {
 } from '@/components';
 import {
   addBook,
+  type Book,
+  type BookInputError,
+  duplicateIsbnText,
   findBookByIsbn,
   getActiveUsage,
   getBook,
+  removeBlockedText,
   removeBook,
+  TEXT,
   updateBook,
-  type Book,
-  type BookInputError,
 } from '@/db';
 import { useQuery } from '@/hooks/useQuery';
 import { pickCoverImage } from '@/lib/files';
-import { plural, splitBookTitle } from '@/lib/format';
+import { splitBookTitle } from '@/lib/format';
 import { colors, space, ui } from '@/theme/tokens';
 
 export default function BookFormScreen() {
@@ -128,7 +131,7 @@ function BookForm({
         {duplicate && (
           <Notice
             tone="busy"
-            text={`Книга с этим ISBN уже есть в каталоге: «${duplicate.title}», ${duplicate.copiesTotal} экз.`}
+            text={duplicateIsbnText(duplicate)}
             action={{ label: 'Открыть её', onPress: () => onOpen(duplicate.id) }}
           />
         )}
@@ -174,7 +177,7 @@ function BookForm({
                 setErrors((e) => e.filter((x) => x !== 'titleRequired'));
               }}
               placeholder="Как на титульном листе"
-              error={errors.includes('titleRequired') ? 'Укажите название.' : undefined}
+              error={errors.includes('titleRequired') ? TEXT.titleRequired : undefined}
             />
             <TextField
               size="md"
@@ -185,7 +188,7 @@ function BookForm({
                 setErrors((e) => e.filter((x) => x !== 'authorRequired'));
               }}
               placeholder="Фамилия И. О."
-              error={errors.includes('authorRequired') ? 'Укажите автора — по нему студенты ищут книгу.' : undefined}
+              error={errors.includes('authorRequired') ? TEXT.authorRequired : undefined}
             />
             <View style={styles.pair}>
               <TextField
@@ -235,8 +238,7 @@ function BookForm({
                 />
                 {blocked && usage && (
                   <AppText variant="caption" tone="secondary" style={styles.label}>
-                    Нельзя, пока на книгу есть активные брони: {usage.reserved} {plural(usage.reserved, ['бронь', 'брони', 'броней'])},{' '}
-                    {usage.issued} {plural(usage.issued, ['выдача', 'выдачи', 'выдач'])}.
+                    {removeBlockedText(usage)}
                   </AppText>
                 )}
               </>

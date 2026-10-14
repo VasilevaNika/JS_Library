@@ -14,6 +14,7 @@ import {
   MIN_PASSWORD_LENGTH,
   register,
   setDevFlag,
+  TEXT,
   type User,
 } from '@/db';
 import { useQuery } from '@/hooks/useQuery';
@@ -139,11 +140,11 @@ export default function LoginScreen() {
               state={emailInvalid || emailTaken ? 'error' : 'default'}
               error={
                 emailInvalid ? (
-                  'Проверьте адрес — в нём нет @'
+                  TEXT.emailInvalid
                 ) : emailTaken ? (
                   <>
                     <AppText variant="caption" tone="overdue">
-                      Этот адрес уже зарегистрирован.
+                      {TEXT.emailTaken}
                     </AppText>
                     <TextLink label="Войти с ним" onPress={() => switchMode('login')} />
                   </>
@@ -167,7 +168,7 @@ export default function LoginScreen() {
               placeholder={`Не короче ${MIN_PASSWORD_LENGTH} символов`}
               secure
               autoComplete="new-password"
-              error={passwordShort ? `Минимум ${MIN_PASSWORD_LENGTH} символов` : undefined}
+              error={passwordShort ? TEXT.passwordShort : undefined}
             />
           </>
         }
@@ -253,7 +254,7 @@ export default function LoginScreen() {
             secure
             autoComplete="password"
             onSubmitEditing={() => void submitLogin()}
-            error={loginError ? 'Почта или пароль не подходят.' : undefined}
+            error={loginError ? TEXT.loginInvalid : undefined}
           />
         </>
       }
