@@ -140,7 +140,11 @@ export function BookSummaryCard({
         <AppText variant="caption" tone="secondary">
           {author}
         </AppText>
-        {chip && <StatusChip label={chip.label} tone={chip.tone} size="sm" />}
+        {chip && (
+          <View style={styles.summaryChip}>
+            <StatusChip label={chip.label} tone={chip.tone} />
+          </View>
+        )}
       </View>
       {onPress && <Icon name="chevron" size={iconSize.button} color={colors.inkSecondary} />}
     </>
@@ -230,7 +234,8 @@ const styles = StyleSheet.create({
     boxShadow: shadows.glass,
   },
   summaryPlain: { padding: 10, borderRadius: radius.lg, backgroundColor: colors.surface },
-  summaryBody: { gap: space[1] },
+  summaryBody: { gap: 2 },
+  summaryChip: { marginTop: space[1] },
   info: { paddingHorizontal: space[4], paddingVertical: space[1], borderRadius: radius.xl, backgroundColor: colors.surface },
   infoCompact: { paddingVertical: 2 },
   infoRow: {

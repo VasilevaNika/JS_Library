@@ -249,6 +249,12 @@ export const backgrounds = {
       'radial-gradient(55% 45% at 100% 0%, rgba(110,134,242,0.4) 0%, rgba(110,134,242,0) 70%), ' +
       'radial-gradient(50% 45% at 0% 10%, rgba(255,170,130,0.3) 0%, rgba(255,170,130,0) 70%)',
   },
+  details: {
+    height: 380,
+    image:
+      'radial-gradient(70% 55% at 50% 30%, rgba(79,163,165,0.45) 0%, rgba(79,163,165,0) 70%), ' +
+      'radial-gradient(60% 50% at 100% 0%, rgba(110,134,242,0.35) 0%, rgba(110,134,242,0) 70%)',
+  },
   success: {
     height: 400,
     image:
