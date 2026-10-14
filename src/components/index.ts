@@ -5,6 +5,7 @@ export * from './BookCover';
 export * from './BookingSheets';
 export * from './BookItems';
 export * from './Button';
+export * from './DatePicker';
 export * from './Feedback';
 export * from './Fields';
 export * from './HomeItems';

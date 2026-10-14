@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@expo-google-fonts/golos-text": "^0.4.2",
+    "@react-native-community/datetimepicker": "9.1.0",
     "eslint-config-expo": "~57.0.2",
     "expo": "~57.0.28",
     "expo-asset": "~57.0.19",
     "expo-blur": "~57.0.3",
+    "expo-camera": "~57.0.6",
     "expo-constants": "~57.0.21",
     "expo-crypto": "~57.0.4",
     "expo-font": "~57.0.4",
