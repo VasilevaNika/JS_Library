@@ -4,8 +4,29 @@
     {
       "name": "expo-web",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["expo", "start", "--web", "--port", "8082"],
+      "runtimeArgs": [
+        "expo",
+        "start",
+        "--web",
+        "--port",
+        "8082"
+      ],
       "port": 8082
+    },
+    {
+      "name": "expo-web-remote",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "expo",
+        "start",
+        "--web",
+        "--port",
+        "8083"
+      ],
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://localhost:4100"
+      },
+      "port": 8083
     }
   ]
 }

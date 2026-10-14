@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "server": "npm --prefix server install && npm --prefix server start"
   },
   "dependencies": {
     "@expo-google-fonts/golos-text": "^0.4.2",

@@ -1,0 +1,19 @@
+{
+  "name": "campus-library-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Общий сервер «Библиотеки кампуса»: SQLite-файл и HTTP для приложения",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "npm run build && node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "~6.0.3"
+  }
+}
