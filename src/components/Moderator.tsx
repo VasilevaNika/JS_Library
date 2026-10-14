@@ -240,7 +240,7 @@ export function Avatar({
   size?: number;
   children?: ReactNode;
 }) {
-  const fontSize = size >= 64 ? 22 : size >= 48 ? 16 : size >= 40 ? 13 : 11;
+  const fontSize = size >= 80 ? 28 : size >= 64 ? 22 : size >= 48 ? 16 : size >= 40 ? 13 : 11;
   return (
     <View
       accessibilityElementsHidden
