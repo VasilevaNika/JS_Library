@@ -1,4 +1,5 @@
-// Чтение CSV/XLSX для импорта каталога (SheetJS) и выгрузка CSV через «Поделиться».
+// Файлы: чтение CSV/XLSX для импорта каталога (SheetJS), выгрузка CSV через «Поделиться», выбор обложки.
+import * as DocumentPicker from 'expo-document-picker';
 import type { DocumentPickerAsset } from 'expo-document-picker';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -108,3 +109,15 @@ export async function shareCsv(fileName: string, rows: string[][]): Promise<bool
 export const TEMPLATE_ROWS: string[][] = [
   ['Название', 'Автор', 'ISBN', 'Количество', 'Обложка (ссылка)'],
 ];
+
+/** Выбор картинки обложки: копия в папку документов приложения, чтобы файл не пропал из кэша. */
+export async function pickCoverImage(): Promise<string | null> {
+  const res = await DocumentPicker.getDocumentAsync({ type: ['image/jpeg', 'image/png'], copyToCacheDirectory: true });
+  const asset = res.canceled ? null : res.assets[0];
+  if (!asset) return null;
+  if (Platform.OS === 'web') return asset.uri;
+  const ext = /\.png$/i.test(asset.name) ? 'png' : 'jpg';
+  const dest = new File(Paths.document, `cover-${Date.now()}.${ext}`);
+  await new File(asset.uri).copy(dest);
+  return dest.uri;
+}

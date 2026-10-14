@@ -37,7 +37,7 @@ import {
   toImportRows,
   type CatalogField,
   type Sheet,
-} from '@/lib/spreadsheet';
+} from '@/lib/files';
 import { colors, fonts, radius, space, status, typography, ui, type StatusTone } from '@/theme/tokens';
 
 type Step = 'upload' | 'mapping' | 'preview' | 'result' | 'error';
@@ -73,7 +73,7 @@ export default function ImportScreen() {
   const [readError, setReadError] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const toCatalog = () => router.navigate('/moderator/catalog');
+  const toCatalog = () => router.dismissTo('/moderator/catalog');
 
   const pick = async () => {
     const res = await DocumentPicker.getDocumentAsync({
