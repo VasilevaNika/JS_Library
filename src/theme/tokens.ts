@@ -42,6 +42,7 @@ export const colors = {
  * Собраны здесь, чтобы в компонентах не было хардкода.
  */
 export const ui = {
+  transparent: 'transparent',
   overlay: 'rgba(22,24,29,0.36)',
   overlayStrong: 'rgba(22,24,29,0.4)',
   overlayMenu: 'rgba(22,24,29,0.32)',

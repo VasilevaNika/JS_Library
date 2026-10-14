@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
   type DimensionValue,
   type StyleProp,
@@ -17,6 +18,7 @@ import {
   colors,
   covers,
   fonts,
+  iconSize,
   radius,
   shadows,
   space,
@@ -75,6 +77,36 @@ const FILTER_TONE: Record<ChipTone, { bg: string; fg: string; count: string }> =
   overdue: { bg: status.overdue.bg, fg: status.overdue.fg, count: ui.countOnTone },
   neutral: { bg: status.neutral.bg, fg: status.neutral.fg, count: ui.countOnNeutral },
 };
+
+/** Поле поиска в тулбаре desktop: белая таблетка 44 px, иконка 18, текст 14. */
+export function ToolbarSearch({
+  value,
+  onChangeText,
+  placeholder,
+  accessibilityLabel,
+  width = 260,
+}: {
+  value: string;
+  onChangeText: (v: string) => void;
+  placeholder: string;
+  accessibilityLabel: string;
+  width?: number;
+}) {
+  return (
+    <View style={[styles.toolbarSearch, { width }]}>
+      <Icon name="search" size={iconSize.table} color={colors.inkSecondary} />
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor={colors.inkSubtle}
+        accessibilityLabel={accessibilityLabel}
+        returnKeyType="search"
+        style={styles.toolbarInput}
+      />
+    </View>
+  );
+}
 
 /** Компактный фильтр журнала со счётчиком. Выбранный — ink. */
 export function FilterChip({
@@ -385,6 +417,16 @@ const styles = StyleSheet.create({
   panelTitle: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
   panelActions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space[2] },
 
+  toolbarSearch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    height: 44,
+    paddingHorizontal: space[4],
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+  },
+  toolbarInput: { flex: 1, minWidth: 0, height: '100%', padding: 0, fontFamily: fonts.regular, fontSize: 14, color: colors.ink, outlineWidth: 0 },
   filter: {
     flexDirection: 'row',
     alignItems: 'center',
