@@ -168,7 +168,8 @@ npm run inspect
 **Подключение к Claude Desktop.**
 
 1. Открыть файл настроек: Win+R, вставить путь
-   `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json`
+   `%LOCALAPPDATA%\Claude-Data\claude_pzs8sxrjxfjjc\claude_desktop_config.json`
+   (или в Claude Desktop: **Настройки → Developer → Edit Config** — откроется нужный файл)
    и открыть его Блокнотом.
 2. Вставить блок `mcpServers` из файла `mcp-server/README.md` (там он готов, с правильными путями).
 3. Полностью закрыть Claude Desktop (значок у часов → Quit) и открыть снова.

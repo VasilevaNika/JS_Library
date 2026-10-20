@@ -26,7 +26,12 @@ npm run inspect:moderator
 ## Подключение к Claude Desktop (Windows, версия из Microsoft Store)
 
 Файл настроек:
-`%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json`
+`%LOCALAPPDATA%\Claude-Data\claude_pzs8sxrjxfjjc\claude_desktop_config.json`
+
+В старых версиях Claude Desktop из Microsoft Store файл лежал в
+`%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\`. Новые версии переносят данные
+в `Claude-Data` и оставляют в старой папке пустой файл `.user-data-left…`. Проще всего открыть нужный файл
+из самого Claude: **Настройки → Developer → Edit Config**.
 
 Откройте его (Win+R → вставить путь → Enter, выбрать Блокнот) и добавьте в него блок `mcpServers`.
 Если в файле уже есть другие настройки, добавьте `"mcpServers": { … }` рядом с ними через запятую.

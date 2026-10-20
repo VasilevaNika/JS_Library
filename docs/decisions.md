@@ -241,3 +241,8 @@
 - Чтобы действие Claude было видно в открытой вкладке без перезагрузки, сервер после каждого изменения данных сообщает приложениям об этом (Server-Sent Events, `GET /events`). Внешних библиотек нет.
 - Обновляется только экран в фокусе — так же тихо, как при возврате на экран (без «Загрузки»). Остальные обновятся при переходе к ним, как и раньше.
 - В React Native нет EventSource, поэтому на телефоне номер версии опрашивается раз в 3 секунды.
+
+## Настройки Claude Desktop
+
+- Claude Desktop из Microsoft Store перенёс данные из `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\` в `%LOCALAPPDATA%\Claude-Data\claude_pzs8sxrjxfjjc\`; путь в документации обновлён. PROMPT_MCP.md не правился — это исходное задание.
+- По согласию человека в настройки `campus-library` добавлен `LIBRARY_API_URL=http://localhost:4000`. Старая строка `LIBRARY_DB_PATH` оставлена: при заданном адресе она не используется.
