@@ -50,7 +50,7 @@ import {
   type ImportRow,
   type JournalFilter,
   type User,
-} from '@/db/api';
+} from '@/db';
 import { JOURNAL_STATUS } from '@/lib/bookingStatus';
 import { dayMonth, dayMonthTime, plural } from '@/lib/format';
 import { declineName } from '@/lib/names';

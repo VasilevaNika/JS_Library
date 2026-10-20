@@ -1,10 +1,11 @@
-// Функции данных, которые общий сервер (server/) выполняет по запросу приложения.
+// Функции данных, которые общий сервер (server/) выполняет по запросу приложения и MCP-сервера.
 // Сессия устройства и dev-переключатели сюда не входят — они всегда локальные.
 export const REMOTE_FUNCTIONS = [
   // читатели
   'authenticate',
   'registerUser',
   'getUser',
+  'getUserByEmail',
   'updateProfile',
   'setTelegramEnabled',
   'setAvatar',
@@ -49,6 +50,9 @@ export const REMOTE_FUNCTIONS = [
   'checkImportRows',
   'commitImport',
   'getSettings',
+  // журнал действий MCP
+  'logAudit',
+  'listAudit',
 ] as const;
 
 export type RemoteFunction = (typeof REMOTE_FUNCTIONS)[number];

@@ -1,5 +1,5 @@
 // Ответы инструментов — обычный текст на русском, теми же словами, что на экранах приложения.
-import type { BookingWithBook, BookingWithBookAndUser, BookWithAvailability } from '@/db/api';
+import type { BookingWithBook, BookingWithBookAndUser, BookWithAvailability } from '@/db';
 import { JOURNAL_STATUS } from '@/lib/bookingStatus';
 import { dayMonth, dayMonthShort, dayMonthTime } from '@/lib/format';
 

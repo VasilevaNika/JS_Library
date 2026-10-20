@@ -1,5 +1,5 @@
-// Публичный API данных для экранов. Экраны импортируют только отсюда, SQLite напрямую не трогают.
-// Без EXPO_PUBLIC_API_URL все функции локальные (src/db/api.ts). С ним функции из REMOTE_FUNCTIONS
+// Публичный API данных для экранов и MCP-сервера. Экраны импортируют только отсюда, SQLite напрямую не трогают.
+// Без адреса сервера (см. remote.ts) все функции локальные (src/db/api.ts). С ним функции из REMOTE_FUNCTIONS
 // выполняет общий сервер, а сессия устройства и dev-переключатели остаются в локальной базе.
 // Ниже функции из REMOTE_FUNCTIONS объявлены заново и по правилам ES-модулей перекрывают одноимённые
 // из export * — это и есть переключение режима. Правило import/export считает это дублированием.
@@ -18,7 +18,10 @@ function via<K extends RemoteFunction>(name: K): Api[K] {
   return ((...args: unknown[]) => callRemote(name, args)) as unknown as Api[K];
 }
 
+export const authenticate = via('authenticate');
+export const registerUser = via('registerUser');
 export const getUser = via('getUser');
+export const getUserByEmail = via('getUserByEmail');
 export const updateProfile = via('updateProfile');
 export const setTelegramEnabled = via('setTelegramEnabled');
 export const setAvatar = via('setAvatar');
@@ -60,6 +63,8 @@ export const postponeCheck = via('postponeCheck');
 export const checkImportRows = via('checkImportRows');
 export const commitImport = via('commitImport');
 export const getSettings = via('getSettings');
+export const logAudit = via('logAudit');
+export const listAudit = via('listAudit');
 
 export const login: Api['login'] = API_URL
   ? async (email, password) => {

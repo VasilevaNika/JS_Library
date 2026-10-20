@@ -1,6 +1,6 @@
 // Кто работает с сервером. Пароль не спрашивается: Claude Desktop запускает сервер на компьютере
 // пользователя, а адрес почты и роль задаются в его конфигурации (LIBRARY_USER_EMAIL, LIBRARY_ROLE).
-import { getUserByEmail, type User, type UserRole } from '@/db/api';
+import { getUserByEmail, type User, type UserRole } from '@/db';
 
 export type Context = {
   email: string;

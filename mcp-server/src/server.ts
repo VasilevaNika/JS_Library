@@ -2,7 +2,8 @@
 // и записывает каждое изменяющее действие в журнал mcp_audit.
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
-import { logAudit, type User } from '@/db/api';
+import { logAudit, type User } from '@/db';
+import { RemoteUnavailableError } from '@/db/remote';
 
 import { requireRole, UserError, type Context } from './context';
 import { TOOLS, type AnyTool } from './tools';
@@ -19,6 +20,7 @@ async function runTool(tool: AnyTool, args: Record<string, unknown>, ctx: Contex
     return { ok: true, text: await tool.run(args, ctx, user) };
   } catch (e) {
     if (e instanceof UserError) return { ok: false, text: e.message };
+    if (e instanceof RemoteUnavailableError) return { ok: false, text: e.message };
     // Неожиданная ошибка — подробности в журнал процесса (stderr), человеку — понятный текст.
     console.error(`[${tool.name}]`, e);
     return { ok: false, text: 'Не удалось выполнить действие из-за внутренней ошибки. Попробуйте ещё раз.' };
