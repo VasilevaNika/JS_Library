@@ -56,3 +56,25 @@ export const REMOTE_FUNCTIONS = [
 ] as const;
 
 export type RemoteFunction = (typeof REMOTE_FUNCTIONS)[number];
+
+/** Функции, которые меняют данные: после каждой сервер сообщает открытым приложениям, что пора обновиться. */
+export const MUTATING_FUNCTIONS: ReadonlySet<RemoteFunction> = new Set<RemoteFunction>([
+  'registerUser',
+  'updateProfile',
+  'setTelegramEnabled',
+  'setAvatar',
+  'addBook',
+  'updateBook',
+  'removeBook',
+  'createBooking',
+  'cancelBooking',
+  'markReturned',
+  'joinQueue',
+  'leaveQueue',
+  'issueBookings',
+  'issueWithoutBooking',
+  'closeOnShelf',
+  'markMissing',
+  'postponeCheck',
+  'commitImport',
+]);

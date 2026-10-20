@@ -47,7 +47,12 @@ afterAll(() => {
 describe('MCP через сервер приложения', () => {
   it('бронь оформляется запросами к серверу и видна в его базе', async () => {
     const free = (await db.listCatalog()).find((b) => b.publicStatus === 'available' && ![1, 3, 6, 7].includes(b.id));
+    const version = () =>
+      fetch(`${process.env.LIBRARY_API_URL}/version`).then((x) => x.json() as Promise<{ result: number }>).then((b) => b.result);
+    const before = await version();
     const r = await student('create_booking', { book_id: free!.id });
+    // Сервер отметил изменение — открытые приложения обновят экран.
+    expect(await version()).toBe(before + 1);
     expect(r.ok).toBe(true);
     // Пользователь, бронь и журнал — всё через HTTP.
     expect(requests).toEqual(expect.arrayContaining(['/rpc/getUserByEmail', '/rpc/createBooking', '/rpc/logAudit']));

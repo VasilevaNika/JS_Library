@@ -9,6 +9,7 @@ import { API_URL, callRemote } from './remote';
 import type { RemoteFunction } from './remoteNames';
 
 export * from './api';
+export { subscribeChanges } from './live';
 
 type Api = typeof api;
 

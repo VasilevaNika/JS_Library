@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import { getCurrentUser, logout as dbLogout, type User } from '@/db';
+import { getCurrentUser, logout as dbLogout, subscribeChanges, type User } from '@/db';
 
 type Session = {
   /** undefined — ещё читаем сессию; null — гость. */
@@ -36,6 +36,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       alive = false;
     };
   }, []);
+
+  // Профиль могли изменить через MCP — подтягиваем имя и почту. Ошибку сети пропускаем, чтобы не разлогинить.
+  useEffect(
+    () =>
+      subscribeChanges(() => {
+        getCurrentUser().then(setUser, () => {});
+      }),
+    [],
+  );
 
   const value = useMemo(() => ({ user, refresh, logout }), [user, refresh, logout]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
