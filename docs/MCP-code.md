@@ -12,10 +12,13 @@
    с ним текстом через стандартный ввод и вывод (stdio).
 2. Сервер объявляет список **инструментов**: название, описание, какие параметры нужны. Когда Claude
    вызывает инструмент, сервер проверяет права и вызывает **ту же функцию из `src/db`**, что и экран приложения.
-3. Ответ — обычный текст на русском, теми же словами, что в приложении. Изменения записываются в журнал `mcp_audit`.
+   Функция выполняется на **сервере приложения** (`server/`) — том же, к которому обращается приложение,
+   открытое в браузере. MCP-сервер отправляет ему HTTP-запрос и в файл базы сам не ходит.
+3. Ответ — обычный текст на русском, теми же словами, что в приложении. Изменения записываются в журнал
+   `mcp_audit`, а сервер приложения сообщает открытой вкладке браузера, что данные изменились.
 
 Своей логики библиотеки (лимиты, сроки, статусы броней) в сервере **нет** — она вся в `src/db`.
-Сервер — это «переходник» между Claude и функциями приложения.
+MCP-сервер — это «переходник» между Claude и приложением: для приложения он такой же клиент, как браузер.
 
 ---
 
@@ -28,18 +31,27 @@ mcp-server/
   tsconfig.json       настройки TypeScript для проверки типов
   vitest.config.mts   настройки тестов
   src/
-    index.ts          точка входа: запуск сервера (21 строка)
-    server.ts         регистрирует инструменты, проверяет роль, пишет журнал (58 строк)
-    context.ts        кто пользователь и какая у него роль (51 строка)
+    index.ts          точка входа: запуск сервера, выбор режима данных
+    server.ts         регистрирует инструменты, проверяет роль, пишет журнал
+    context.ts        кто пользователь и какая у него роль
     tools.ts          все 20 инструментов (самый большой файл)
     format.ts         как превратить книгу или бронь в строчку текста
   test/
-    tools.test.ts     51 автотест
+    tools.test.ts     51 тест инструментов (база напрямую)
+    remote.test.ts    3 теста работы через сервер приложения
   dist/index.js       результат сборки — его запускает Claude Desktop
 
-src/db/               ОБЩИЙ код данных — им пользуются и приложение, и MCP-сервер
+server/               СЕРВЕР ПРИЛОЖЕНИЯ — через него работают и браузер, и MCP-сервер
+  src/app.ts          HTTP: POST /rpc/<функция>, GET /events (сообщения «данные изменились»)
+  src/index.ts        запуск на порту 4000
+
+src/db/               ОБЩИЙ код данных — им пользуются приложение, сервер приложения и MCP-сервер
+  index.ts            вход для экранов и MCP: с адресом сервера превращает функции в HTTP-запросы
+  remote.ts           сам HTTP-запрос к серверу (callRemote) и адрес сервера
+  remoteNames.ts      какие функции сервер разрешает вызывать и какие из них меняют данные
+  live.ts             подписка приложения на «данные изменились»
   api.ts              «оглавление»: собирает все функции данных в одно место
-  client.node.ts      подключение к базе SQLite для Node (сервер)
+  client.node.ts      подключение к базе SQLite для Node (сервер приложения)
   client.ts           то же для телефона (Expo) — сервер его НЕ использует
   password.node.ts    хэш пароля и код брони для Node
   messages.ts         тексты ошибок, общие для приложения и сервера
@@ -52,19 +64,28 @@ src/db/               ОБЩИЙ код данных — им пользуютс
 
 ```mermaid
 flowchart TD
-    I[index.ts<br/>запуск] --> S[server.ts<br/>регистрация и журнал]
-    I --> CL[src/db/client.node.ts<br/>база]
-    S --> T[tools.ts<br/>инструменты]
-    S --> CX[context.ts<br/>пользователь и роль]
-    T --> CX
-    T --> F[format.ts<br/>текст ответа]
-    T --> API[src/db/api.ts<br/>функции приложения]
-    CX --> API
-    S --> API
-    API --> DB[bookings, books, users,<br/>moderator, messages, audit…]
-    DB --> CL
-    CL --> FILE[(server/data/library.db)]
+    subgraph MCP[mcp-server — процесс, который запускает Claude Desktop]
+      I[index.ts<br/>запуск] --> S[server.ts<br/>регистрация и журнал]
+      S --> T[tools.ts<br/>инструменты]
+      S --> CX[context.ts<br/>пользователь и роль]
+      T --> CX
+      T --> F[format.ts<br/>текст ответа]
+      T --> IX[src/db/index.ts<br/>вход к функциям]
+      CX --> IX
+      IX --> R[src/db/remote.ts<br/>HTTP-запрос]
+    end
+    subgraph APP[server — сервер приложения]
+      A[app.ts<br/>POST /rpc, GET /events] --> API[src/db/api.ts<br/>функции приложения]
+      API --> DB[bookings, books, users,<br/>moderator, messages, audit…]
+      DB --> CL[client.node.ts]
+      CL --> FILE[(server/data/library.db)]
+    end
+    R -->|HTTP| A
+    W[Приложение в браузере<br/>src/db/index.ts + live.ts] -->|HTTP| A
+    A -.->|данные изменились| W
 ```
+
+Слева — тот же путь, что у приложения в браузере: оба приходят в `app.ts` одинаковыми запросами.
 
 ---
 
@@ -76,26 +97,31 @@ flowchart TD
 "campus-library": {
   "command": "C:\\Program Files\\nodejs\\node.exe",
   "args": ["C:\\...\\mcp-server\\dist\\index.js"],
-  "env": { "LIBRARY_USER_EMAIL": "...", "LIBRARY_ROLE": "student", "LIBRARY_DB_PATH": "...\\library.db" }
+  "env": { "LIBRARY_USER_EMAIL": "...", "LIBRARY_ROLE": "student", "LIBRARY_API_URL": "http://localhost:4000" }
 }
 ```
 
 То есть Claude Desktop при старте выполняет команду `node dist/index.js` и передаёт три
 **переменные окружения** (`env`) — это как записка, приложенная к запуску программы. Код читает их через `process.env`.
+`LIBRARY_API_URL` — адрес сервера приложения: через него идут все действия.
 
 ### `src/index.ts` — точка входа
 
 ```ts
 async function main(): Promise<void> {
   const ctx = contextFromEnv();          // 1. прочитать почту и роль из переменных окружения
-  await getDb();                         // 2. открыть базу (создать и заполнить, если её нет)
+  if (API_URL) {                         // 2. есть адрес сервера приложения — проверить, что он отвечает
+    const alive = await fetch(`${API_URL}/health`).then((r) => r.ok, () => false);
+    console.error(`Данные — через сервер приложения ${API_URL}...`);
+  } else {
+    await getDb();                       //    нет адреса — открыть файл базы (так работают автотесты)
+  }
   const server = createServer(ctx);      // 3. собрать сервер со всеми инструментами
   await server.connect(new StdioServerTransport()); // 4. начать слушать stdin/stdout
-  console.error(`MCP-сервер библиотеки запущен...`);
 }
 ```
 
-[index.ts:10–16](../mcp-server/src/index.ts#L10)
+[index.ts:16–30](../mcp-server/src/index.ts#L16)
 
 - **`StdioServerTransport`** — готовый класс из официальной библиотеки MCP (`@modelcontextprotocol/sdk`).
   Он читает сообщения из стандартного ввода и пишет ответы в стандартный вывод. Сами сообщения — JSON.
@@ -103,7 +129,7 @@ async function main(): Promise<void> {
   Если написать туда `console.log('привет')`, Claude получит «мусор» вместо JSON и связь сломается.
   Поэтому всё, что для человека, идёт в поток ошибок (stderr) — Claude Desktop складывает его в лог.
 - Если что-то упало при запуске, срабатывает `main().catch(...)` → сообщение в stderr и выход с кодом 1
-  ([index.ts:18–21](../mcp-server/src/index.ts#L18)). Claude Desktop покажет, что сервер не запустился.
+  ([index.ts:31–34](../mcp-server/src/index.ts#L31)). Claude Desktop покажет, что сервер не запустился.
 
 ---
 
@@ -150,6 +176,9 @@ await build({
 
 ## 5. База данных на компьютере: `src/db/client.node.ts`
 
+Этим файлом пользуется **сервер приложения** (`server/`). MCP-сервер с адресом `LIBRARY_API_URL` базу не
+открывает вовсе — только в автотестах `tools.test.ts`, где сервера приложения нет.
+
 Функции из `src/db` вызывают базу так: `db.getAllAsync(sql, ...)`, `db.runAsync(sql, ...)`. Это
 интерфейс `expo-sqlite`. В Node есть своя SQLite (`node:sqlite`, класс `DatabaseSync`), но с другими
 названиями методов. Поэтому написан **адаптер** — класс `NodeDatabase`
@@ -164,9 +193,8 @@ async getAllAsync<T>(sql: string, ...params: unknown[]): Promise<T[]> {
 Функция `init()` ([client.node.ts:75](../src/db/client.node.ts#L75)) при первом обращении:
 
 1. Берёт путь к файлу из `LIBRARY_DB_PATH` или по умолчанию `server/data/library.db`, создаёт папку.
-2. Включает `journal_mode = WAL` и `busy_timeout = 5000`. Это нужно, потому что с одним файлом
-   одновременно работают **два процесса** — MCP-сервер и общий сервер приложения. WAL позволяет
-   читать во время записи, а `busy_timeout` — подождать до 5 секунд, если файл занят, вместо ошибки.
+2. Включает `journal_mode = WAL` и `busy_timeout = 5000`: WAL позволяет читать во время записи,
+   а `busy_timeout` — подождать до 5 секунд, если файл занят, вместо ошибки.
 3. Прогоняет **миграции** из `schema.ts`: номер версии хранится в `PRAGMA user_version`, недостающие
    шаги выполняются по порядку. Миграция 2 создаёт таблицу `mcp_audit`.
 4. Если пользователей нет — заполняет базу тестовыми данными (`seedDatabase` из `src/mocks/seed.ts`).
@@ -191,9 +219,52 @@ export * from './audit';
 ...
 ```
 
-[api.ts](../src/db/api.ts) просто собирает всё в одно место. MCP-сервер импортирует только отсюда:
-`import { createBooking, getSettings, ... } from '@/db/api'`. Экраны приложения импортируют из
-`@/db` (`index.ts`), который в свою очередь берёт всё из `api.ts`.
+[api.ts](../src/db/api.ts) просто собирает всё в одно место. Его импортирует сервер приложения
+(`server/src/app.ts`): там функции выполняются по-настоящему, с базой.
+
+---
+
+## 6а. `src/db/index.ts` и `remote.ts` — как вызов функции превращается в HTTP-запрос
+
+MCP-сервер импортирует функции не из `api.ts`, а из `@/db` — это [src/db/index.ts](../src/db/index.ts),
+**тот же вход, что у экранов приложения**:
+
+```ts
+import { createBooking, getSettings, ... } from '@/db';   // в tools.ts — так же, как в app/book/[id].tsx
+```
+
+В `index.ts` каждая функция пропускается через `via`:
+
+```ts
+function via<K extends RemoteFunction>(name: K): Api[K] {
+  if (!API_URL) return api[name];                                   // адреса нет — обычная функция с базой
+  return ((...args: unknown[]) => callRemote(name, args)) as ...;   // адрес есть — HTTP-запрос
+}
+export const createBooking = via('createBooking');
+```
+
+[index.ts:16](../src/db/index.ts#L16)
+
+`callRemote` ([remote.ts:16](../src/db/remote.ts#L16)) отправляет `POST http://localhost:4000/rpc/createBooking`
+с телом `{"args": [userId, bookId]}`. Сервер приложения вызывает настоящую `createBooking` и возвращает
+результат JSON. Для `tools.ts` ничего не меняется: он вызывает `await createBooking(...)` и получает тот же
+результат, просто функция выполнилась на сервере. Адрес берётся из `LIBRARY_API_URL` у MCP-сервера и из
+`EXPO_PUBLIC_API_URL` у приложения ([remote.ts:4](../src/db/remote.ts#L4)).
+
+Если сервер не отвечает, `callRemote` бросает `RemoteUnavailableError`, и `runTool` отдаёт Claude текст
+«Сервер библиотеки не отвечает (…). Запустите его командой npm run server в папке проекта.»
+
+## 6б. Сервер приложения `server/src/app.ts` и обновление вкладки
+
+- `POST /rpc/<имя>` — вызывает функцию из `api.ts`. Разрешены только имена из
+  [remoteNames.ts](../src/db/remoteNames.ts) — так снаружи нельзя вызвать что попало.
+- После успешного вызова функции, которая меняет данные (`MUTATING_FUNCTIONS`), сервер вызывает
+  `notifyChanged` ([app.ts:42](../server/src/app.ts#L42)): номер версии данных растёт, и всем открытым
+  приложениям по `GET /events` уходит сообщение (Server-Sent Events — поток сообщений от сервера к браузеру).
+- В приложении [live.ts](../src/db/live.ts) держит это соединение, а хук `useQuery`
+  ([useQuery.ts:38](../src/hooks/useQuery.ts#L38)) по сообщению перезагружает данные экрана, который сейчас открыт.
+
+Поэтому, когда Claude бронирует книгу, вкладка «Брони» в браузере обновляется сама.
 
 ---
 
@@ -253,7 +324,7 @@ export function createServer(ctx: Context): McpServer {
 }
 ```
 
-[server.ts:33–58](../mcp-server/src/server.ts#L33)
+[server.ts:35–61](../mcp-server/src/server.ts#L35)
 
 - **`McpServer`** — класс из официальной библиотеки. Он сам отвечает Claude на служебные вопросы
   «какие у тебя инструменты?» (`tools/list`) и передаёт вызовы (`tools/call`) в нашу функцию.
@@ -273,13 +344,14 @@ async function runTool(tool, args, ctx) {
     return { ok: true, text: await tool.run(args, ctx, user) };
   } catch (e) {
     if (e instanceof UserError) return { ok: false, text: e.message };
+    if (e instanceof RemoteUnavailableError) return { ok: false, text: e.message };  // сервер приложения не запущен
     console.error(`[${tool.name}]`, e);
     return { ok: false, text: 'Не удалось выполнить действие из-за внутренней ошибки. Попробуйте ещё раз.' };
   }
 }
 ```
 
-[server.ts:16–26](../mcp-server/src/server.ts#L16)
+[server.ts:17–28](../mcp-server/src/server.ts#L17)
 
 - Роль проверяется **здесь, один раз для всех** инструментов. Самим инструментам не нужно помнить об этом.
 - `UserError` → человек видит понятный текст. Любая другая ошибка → подробности уходят в лог (stderr),
@@ -297,13 +369,14 @@ async (args) => {
 }
 ```
 
-[server.ts:46–54](../mcp-server/src/server.ts#L46)
+[server.ts:48–56](../mcp-server/src/server.ts#L48)
 
 - Журнал пишется только для изменяющих инструментов (`mutating: true`), причём **всегда** — и при
   успехе, и при отказе, и при предпросмотре без подтверждения.
-- `auditParams` ([server.ts:28](../mcp-server/src/server.ts#L28)) заменяет пароль на `***`, чтобы он не
+- `auditParams` ([server.ts:31](../mcp-server/src/server.ts#L31)) заменяет пароль на `***`, чтобы он не
   попал в журнал при регистрации.
 - `logAudit` живёт в [src/db/audit.ts](../src/db/audit.ts#L15) — это обычный `INSERT INTO mcp_audit (...)`.
+  Вызывается тоже через сервер приложения, поэтому журнал лежит в той же базе, что и брони.
 - Ответ Claude — формат MCP: список кусочков `content` (у нас один текстовый) и флаг `isError`.
 
 ---
@@ -463,23 +536,31 @@ run: async (args, ctx, user) => {
 | 1 | Claude Desktop | Выбирает инструмент `cancel_booking`, отправляет в stdin сервера JSON: `{"method":"tools/call","params":{"name":"cancel_booking","arguments":{"code":"7KQ4MX"}}}` |
 | 2 | `StdioServerTransport` (библиотека) | Читает строку, разбирает JSON, передаёт в `McpServer` |
 | 3 | `McpServer` (библиотека) | Находит инструмент по имени, проверяет `arguments` схемой zod. `code` — непустая строка, всё в порядке |
-| 4 | [server.ts:46](../mcp-server/src/server.ts#L46) | Вызывается наша функция → `runTool` |
-| 5 | [server.ts:18](../mcp-server/src/server.ts#L18) | `requireRole(ctx, 'student')` → `currentUser` находит Анну по почте из env, роль студент — ок |
-| 6 | [tools.ts:352](../mcp-server/src/tools.ts#L352) | `run`: `bookingByCode` → `getBookingByCode('7KQ4MX')` из `src/db/bookings.ts` → SQL к базе |
+| 4 | [server.ts:48](../mcp-server/src/server.ts#L48) | Вызывается наша функция → `runTool` |
+| 5 | [server.ts:19](../mcp-server/src/server.ts#L19) | `requireRole(ctx, 'student')` → `currentUser` → `getUserByEmail` — это уже HTTP-запрос `POST /rpc/getUserByEmail` к серверу приложения. Анна найдена, роль студент — ок |
+| 6 | [tools.ts:352](../mcp-server/src/tools.ts#L352) | `run`: `bookingByCode` → `getBookingByCode('7KQ4MX')` → `POST /rpc/getBookingByCode`. Сервер приложения выполняет функцию из `src/db/bookings.ts` (SQL к базе) и возвращает бронь JSON |
 | 7 | [tools.ts:354](../mcp-server/src/tools.ts#L354) | Статус `reserved` — отменять можно |
 | 8 | [tools.ts:355](../mcp-server/src/tools.ts#L355) | `confirm` нет → возвращается вопрос «Отменить бронь…? Ничего не изменено…». База не тронута |
-| 9 | [server.ts:49](../mcp-server/src/server.ts#L49) | Инструмент изменяющий → `logAudit` пишет строку в `mcp_audit` (ok = 1, результат — текст вопроса) |
-| 10 | [server.ts:53](../mcp-server/src/server.ts#L53) | Ответ `{content:[{type:'text', text:'Отменить бронь…'}], isError:false}` уходит в stdout |
+| 9 | [server.ts:51](../mcp-server/src/server.ts#L51) | Инструмент изменяющий → `logAudit` → `POST /rpc/logAudit`, строка в `mcp_audit` (ok = 1, результат — текст вопроса) |
+| 10 | [server.ts:55](../mcp-server/src/server.ts#L55) | Ответ `{content:[{type:'text', text:'Отменить бронь…'}], isError:false}` уходит в stdout |
 | 11 | Claude Desktop | Показывает Анне вопрос. Анна: «да» |
 | 12 | Снова шаги 1–7 | Теперь `arguments: {"code":"7KQ4MX","confirm":true}` |
-| 13 | [tools.ts:356](../mcp-server/src/tools.ts#L356) | `cancelBooking(b.id, user.id)` из `src/db/bookings.ts` — `UPDATE bookings SET status='cancelled'…` в транзакции |
-| 14 | Журнал и ответ | Ещё одна запись в `mcp_audit`, Claude получает «Бронь 7KQ4MX … отменена» |
+| 13 | [tools.ts:356](../mcp-server/src/tools.ts#L356) | `cancelBooking(b.id, user.id)` → `POST /rpc/cancelBooking`. На сервере приложения — `UPDATE bookings SET status='cancelled'…` в транзакции |
+| 14 | [app.ts:84](../server/src/app.ts#L84) | `cancelBooking` меняет данные → `notifyChanged`: открытая вкладка «Брони» получает сообщение и перезагружает список — бронь исчезает без перезагрузки страницы |
+| 15 | Журнал и ответ | Ещё одна запись в `mcp_audit`, Claude получает «Бронь 7KQ4MX … отменена» |
 
 ---
 
-## 12. Тесты: `test/tools.test.ts`
+## 12. Тесты: `test/tools.test.ts` и `test/remote.test.ts`
 
-Запуск: `cd mcp-server`, затем `npm test`. Ожидаемо: `Tests 51 passed`.
+Запуск: `cd mcp-server`, затем `npm test`. Ожидаемо: `Tests 54 passed` (51 + 3).
+
+`remote.test.ts` поднимает настоящий сервер приложения (`createAppServer` из `server/src/app.ts`) на
+свободном порту, задаёт `LIBRARY_API_URL` и проверяет: бронь через MCP идёт запросами `/rpc/getUserByEmail`,
+`/rpc/createBooking`, `/rpc/logAudit` и видна в базе сервера; номер версии вырос (значит, вкладка
+обновится); ошибки приходят теми же словами; при выключенном сервере — «Сервер библиотеки не отвечает».
+
+Ниже — про `tools.test.ts`, где инструменты проверяются с базой напрямую:
 
 Как устроено:
 
@@ -510,7 +591,9 @@ it('без confirm ничего не меняет', async () => {
 ## 13. Что показать преподавателю
 
 1. **Сервер подключён.** Claude Desktop → чат → меню инструментов → `campus-library`, 20 инструментов.
-2. **Тесты.** `cd mcp-server` → `npm test` → 51 зелёный тест.
+   Рядом — браузер с приложением (`npm run server` + `npx expo start --web`). Попросить Claude
+   забронировать книгу — бронь появится во вкладке «Брони» сама.
+2. **Тесты.** `cd mcp-server` → `npm test` → 54 зелёных теста.
 3. **Inspector.** `npm run inspect` → Connect → Tools → List Tools: видно описания и схемы. Вызвать
    `search_books` с «грокаем».
 4. **Код** в таком порядке: `index.ts` (запуск) → `server.ts` (регистрация, роль, журнал) →
@@ -530,8 +613,20 @@ it('без confirm ничего не меняет', async () => {
 это делает библиотека MCP до вызова. Потом правила библиотеки внутри функций `src/db` (например,
 `validateBook`, `validateRegistration`, лимит в `createBooking`).
 
-**Почему логика не продублирована?** Сервер импортирует функции из `src/db` через `@/db/api`.
-Сборщик подменяет только два файла (`client` и `password`) на версии для Node — остальное общее.
+**Почему логика не продублирована?** MCP-сервер импортирует функции из `@/db` — так же, как экраны.
+Выполняются они на сервере приложения, который берёт те же файлы `src/db`. Сборщик подменяет только два
+файла (`client` и `password`) на версии для Node — остальное общее.
+
+**Почему MCP работает через сервер приложения, а не с базой?** Так он работает с приложением, а не в обход:
+все изменения проходят через одну точку, и та сообщает открытому приложению, что данные изменились.
+Если бы MCP писал в файл сам, вкладка браузера об этом не узнала бы.
+
+**Где MCP-сервер превращается в клиента приложения?** В `src/db/index.ts`: функция `via` при заданном
+`LIBRARY_API_URL` подменяет каждую функцию HTTP-запросом `callRemote` из `remote.ts`.
+
+**Как вкладка узнаёт об изменении?** Сервер приложения после изменения пишет сообщение в поток
+`GET /events` (`notifyChanged` в `server/src/app.ts`), `live.ts` в приложении его получает, `useQuery`
+перезагружает экран.
 
 **Что будет, если внутри функции случится сбой?** `runTool` поймает исключение: подробности — в stderr
 (лог Claude Desktop), человеку — «Не удалось выполнить действие из-за внутренней ошибки».

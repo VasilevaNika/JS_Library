@@ -6,13 +6,17 @@
 
 Нужен Node.js 22.5 или новее (проверить: `node --version`).
 
+MCP-сервер работает **через сервер приложения** (`server/`) — тот же, к которому обращается приложение
+в браузере. Поэтому перед работой с Claude запустите его в корне проекта: `npm run server`.
+Действия Claude сразу видны в открытом приложении.
+
 ## Сборка и проверка
 
 ```bash
 cd mcp-server
 npm install
 npm run build      # dist/index.js — один файл, его запускает Claude Desktop
-npm test           # юнит-тесты всех инструментов
+npm test           # тесты всех инструментов и работы через сервер приложения
 npm run inspect    # MCP Inspector в браузере от имени студента
 npm run inspect:moderator
 ```
@@ -36,7 +40,7 @@ npm run inspect:moderator
       "env": {
         "LIBRARY_USER_EMAIL": "anna.smirnova@mail.ru",
         "LIBRARY_ROLE": "student",
-        "LIBRARY_DB_PATH": "C:\\Users\\Daniil\\Desktop\\Campus_Library\\server\\data\\library.db"
+        "LIBRARY_API_URL": "http://localhost:4000"
       }
     }
   }
@@ -44,13 +48,17 @@ npm run inspect:moderator
 ```
 
 - `LIBRARY_USER_EMAIL` — от чьего имени действует Claude. Для модератора: `moderator@campus.test` и `LIBRARY_ROLE` = `moderator`.
-- `LIBRARY_DB_PATH` — та же база, что у общего сервера `server/`: так приложение и Claude видят одни данные.
+- `LIBRARY_API_URL` — адрес сервера приложения. Все действия идут через него, как у приложения в браузере.
+  Без этой строки MCP-сервер работает с файлом базы напрямую (так устроены автотесты), и вкладка браузера
+  об изменениях не узнает.
 - После правки полностью закройте Claude Desktop (значок в трее → Quit) и откройте снова.
   В окне чата у кнопки инструментов появится `campus-library`.
 
 ## Демо-сценарий для защиты
 
-База — тестовые данные (сбросить: удалить `server/data/library.db`, он создастся заново).
+База — тестовые данные (сбросить: остановить сервер, удалить `server/data/library.db`, запустить снова).
+Перед началом: `npm run server`, приложение в браузере (`npx expo start --web`), вход как Анна,
+вкладка «Брони». После шагов 2 и 4 вкладка обновляется сама.
 Пользователь — студентка Анна Смирнова. Все шаги проверены через Inspector.
 
 | # | Фраза в Claude Desktop | Инструменты | Ожидаемый результат |
