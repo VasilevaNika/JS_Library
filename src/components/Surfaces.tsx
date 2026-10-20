@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { backgrounds, colors, gradients, radius, shadows } from '@/theme/tokens';
+import { backgrounds, colors, gradients, radius, shadows, size } from '@/theme/tokens';
 
 type BoxProps = { children?: ReactNode; style?: StyleProp<ViewStyle> };
 
@@ -34,7 +34,22 @@ export function ScreenBackground({ variant = 'search', children, style }: BoxPro
   );
 }
 
+/**
+ * Браузер: экраны студента нарисованы под телефон, поэтому на широком окне они идут колонкой
+ * шириной size.phoneWidth по центру. На iOS и Android и при enabled=false — просто flex: 1.
+ * pointerEvents="box-none": нажатия мимо содержимого проходят дальше (например, на затемнение под шторкой).
+ */
+export function PhoneColumn({ children, enabled = true }: { children?: ReactNode; enabled?: boolean }) {
+  return (
+    <View pointerEvents="box-none" style={[styles.flex, Platform.OS === 'web' && enabled && styles.phoneColumn]}>
+      {children}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  phoneColumn: { width: '100%', maxWidth: size.phoneWidth, alignSelf: 'center' },
   glass: {
     backgroundColor: colors.glass,
     borderWidth: 1,

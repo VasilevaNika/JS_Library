@@ -21,6 +21,7 @@ import { AppText } from './AppText';
 import { BookCover } from './BookCover';
 import { Button } from './Button';
 import { Icon } from './Icon';
+import { PhoneColumn } from './Surfaces';
 
 type NoticeProps = {
   tone: StatusTone;
@@ -148,36 +149,40 @@ export function Dialog({ visible, title, text, children, cancelLabel, confirmLab
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel} statusBarTranslucent>
       <View style={styles.modalRoot}>
         <Backdrop />
-        <View
-          accessibilityRole="alert"
-          accessibilityViewIsModal
-          style={[styles.dialog, desktop && styles.dialogDesktop]}
-        >
-          {typeof title === 'string' ? <AppText variant="title">{title}</AppText> : title}
-          {text ? (
-            <AppText variant={desktop ? 'label' : 'body'} tone={desktop ? 'neutral' : 'secondary'} style={desktop && styles.regular}>
-              {text}
-            </AppText>
-          ) : null}
-          {children}
-          <View style={[styles.dialogButtons, desktop && styles.dialogButtonsDesktop]}>
-            <Button
-              label={cancelLabel}
-              onPress={onCancel}
-              variant="secondary"
-              size={desktop ? 'md' : 'lg'}
-              style={!desktop && styles.flex}
-            />
-            <Button
-              label={confirmLabel}
-              onPress={onConfirm}
-              variant="danger"
-              size={desktop ? 'md' : 'lg'}
-              strong
-              style={!desktop && styles.flex}
-            />
+        <PhoneColumn enabled={!desktop}>
+          <View style={styles.modalRoot} pointerEvents="box-none">
+            <View
+              accessibilityRole="alert"
+              accessibilityViewIsModal
+              style={[styles.dialog, desktop && styles.dialogDesktop]}
+            >
+              {typeof title === 'string' ? <AppText variant="title">{title}</AppText> : title}
+              {text ? (
+                <AppText variant={desktop ? 'label' : 'body'} tone={desktop ? 'neutral' : 'secondary'} style={desktop && styles.regular}>
+                  {text}
+                </AppText>
+              ) : null}
+              {children}
+              <View style={[styles.dialogButtons, desktop && styles.dialogButtonsDesktop]}>
+                <Button
+                  label={cancelLabel}
+                  onPress={onCancel}
+                  variant="secondary"
+                  size={desktop ? 'md' : 'lg'}
+                  style={!desktop && styles.flex}
+                />
+                <Button
+                  label={confirmLabel}
+                  onPress={onConfirm}
+                  variant="danger"
+                  size={desktop ? 'md' : 'lg'}
+                  strong
+                  style={!desktop && styles.flex}
+                />
+              </View>
+            </View>
           </View>
-        </View>
+        </PhoneColumn>
       </View>
     </Modal>
   );
@@ -200,10 +205,12 @@ export function BottomSheet({
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <View style={styles.modalRoot}>
         <Backdrop onPress={onClose} strong={strongBackdrop} />
-        <View accessibilityViewIsModal style={[styles.sheet, { bottom: space[2] + insets.bottom }]}>
-          <View style={styles.handle} />
-          {children}
-        </View>
+        <PhoneColumn>
+          <View accessibilityViewIsModal style={[styles.sheet, { bottom: space[2] + insets.bottom }]}>
+            <View style={styles.handle} />
+            {children}
+          </View>
+        </PhoneColumn>
       </View>
     </Modal>
   );
